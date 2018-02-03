@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd" > 
+<configuration>
+<!-- 为实体类指定简单类名作为别名 -->
+	<typeAliases>
+		<package name="cn.dhx.beans"></package>	
+	</typeAliases>
+<!-- 注册映射文件 -->
+	<mappers>
+    	<package name="cn.dhx.dao"></package>
+   	</mappers>
+
+</configuration> 
