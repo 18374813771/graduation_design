@@ -1,6 +1,7 @@
 package cn.dhx.handlers;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,19 +21,26 @@ public class UserController{
 	public void setService(IUserService service) {
 		this.service = service;
 	}
-
+	
 	//注册
 	@RequestMapping("/register.do")
 	public String register(String name,String email,String password,
-			String password2,HttpServletRequest request){
-		if(service.checkName(name)){
+			String password2,HttpServletRequest request,HttpSession session){
+		if(service.checkName(name)){				//用户名不存在,可用
 			User user = new User();
 			user.setName(name);
 			user.setPassword(password);
 			user.setEmail(email);
+			//用户默认权限为2,表示普通用户
+			user.setPermissions(2);
+			//用户可用性默认为1，表示可用
+			user.setIsavailable(1);
+			//用户头像默认路径
+			user.setSrc("../img/default.jpg");
 			service.register(user);
-			return "/WEB-INF/login.jsp";
-		}else{
+			session.setAttribute("user", user);
+			return "/WEB-INF/index.jsp";
+		}else{										//用户名已存在，不可用
 			//用于数据回显
 			String msg="用户名已存在，请更换";
 			request.setAttribute("name", name);
@@ -45,11 +53,42 @@ public class UserController{
 		
 		
 	}
-	//主页
-	@RequestMapping("/toIndex.do")
-	public String index(){
-		
-		return "/WEB-INF/register.jsp";
+	
+	//登录
+	@RequestMapping("/login.do")
+	public String login(String name,String password,HttpServletRequest request,
+			HttpSession session){
+		if(service.checkName(name)){				//用户名不存在，无法登录
+			//用于数据回显
+			String msg="你输入的用户名不存在，请更换或注册";
+			request.setAttribute("name", name);
+			request.setAttribute("password", password);
+			request.setAttribute("msg", msg);
+			return "/WEB-INF/login.jsp";
+		}else{
+			if(service.checkPassword(name,password)){	//密码正确
+				User user = service.getUser(name);
+				session.setAttribute("user", user);
+				return "/WEB-INF/index.jsp";
+			}else{										//密码错误
+				String msg="你输入的用户名或密码错误，请重新输入";
+				request.setAttribute("name", name);
+				request.setAttribute("password", password);
+				request.setAttribute("msg", msg);
+				return "/WEB-INF/login.jsp";
+			}
+		}
+	}
+	//修改个人信息
+	@RequestMapping("/changeInfo.do")
+	public String changeInfo(int age,String telephone,String sex,HttpServletRequest request){
+		HttpSession session = request.getSession();
+		User user=(User) session.getAttribute("user");
+		user.setAge(age);
+		user.setTelephone(telephone);
+		user.setSex(sex);
+		service.updateUserInfo(user);
+		return "/toMyCenter.do";
 	}
 
 }

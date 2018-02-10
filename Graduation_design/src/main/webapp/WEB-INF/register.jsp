@@ -141,7 +141,9 @@
 			<div class="col-sm-offset-0 col-sm-12">
 				<button type="submit" id="bt1" class="btn btn-info btn-block">注册</button>
 			</div>
-			
+			<br>
+			<br>
+			<div class="col-sm-offset-5 col-sm-12"><span>已有账号？<a href="/toLogin.do">登录</a></span></div>
 		</form>
 	</div>
 	

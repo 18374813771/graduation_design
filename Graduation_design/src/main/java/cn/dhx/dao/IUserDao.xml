@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >   
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">   
 <mapper namespace="cn.dhx.dao.IUserDao">
 	<insert id="insertUser" >
-	   	  insert into user(name,password,email) value(#{name},#{password},#{email}) 
+	   	  insert into user(name,password,email,isavailable,permissions,src) 
+	   	  value(#{name},#{password},#{email},#{isavailable},#{permissions},#{src}) 
 	</insert>
 	
-	<select id="checkName" resultType="User">
+	<select id="getUserInfo" resultType="User">
 	   	  select * from user where name=#{name} 
 	</select>
+	
+	<update id="updateUserInfo">
+	   	update user set age=#{age},telephone=#{telephone},sex=#{sex} where name=#{name}
+	</update>
 </mapper>
