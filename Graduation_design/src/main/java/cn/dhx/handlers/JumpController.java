@@ -38,4 +38,9 @@ public class JumpController {
 	public String toUpChatHead(){
 		return "/WEB-INF/upChatHead.jsp";
 	}
+	//修改头像2
+	@RequestMapping("/toTest.do")
+	public String toTest(){
+		return "/WEB-INF/test.jsp";
+	}
 }

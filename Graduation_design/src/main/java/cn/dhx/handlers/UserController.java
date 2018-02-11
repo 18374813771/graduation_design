@@ -1,12 +1,20 @@
 package cn.dhx.handlers;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import cn.dhx.beans.User;
 import cn.dhx.service.IUserService;
@@ -89,6 +97,41 @@ public class UserController{
 		user.setSex(sex);
 		service.updateUserInfo(user);
 		return "/toMyCenter.do";
+	}
+	
+	/**
+	 * 头像图片上传
+	 * @throws IOException 
+	 */
+	@RequestMapping(value ="/saveHeaderPic.do", method = RequestMethod.POST)
+	public void saveHeaderPic(@RequestParam("upload-file") CommonsMultipartFile file,
+			HttpServletRequest request, HttpServletResponse response) throws IOException {
+	        String resMsg = "";
+	    try {
+
+	        long  startTime=System.currentTimeMillis();
+	       
+	        System.out.println("fileName："+file.getOriginalFilename());
+//	                    流读取文件只能用绝对路径
+//	        String path="../../../../webapp/img/"+new Date().getTime()+file.getOriginalFilename();
+	        //动态获取绝对路径
+	        String path=request.getServletContext().getRealPath("/img/")+"\\"+new Date().getTime()+file.getOriginalFilename();
+//	        String path="C:\\Users\\Administrator\\git\\graduation_design\\Graduation_design\\src\\main\\webapp\\img/"+new Date().getTime()+file.getOriginalFilename();
+	        System.out.println("path:" + path);
+
+	        File newFile=new File(path);
+	        //通过CommonsMultipartFile的方法直接写文件
+	        file.transferTo(newFile);
+	        long  endTime=System.currentTimeMillis();
+	        System.out.println("运行时间："+String.valueOf(endTime-startTime)+"ms");
+	        resMsg = "1";
+	    } catch (IllegalStateException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        resMsg = "0";
+	    }
+	    response.getWriter().write(resMsg);
+
 	}
 
 }
