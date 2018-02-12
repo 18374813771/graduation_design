@@ -52,4 +52,10 @@ public class UserServiceImpl implements IUserService {
 		dao.updateUserInfo(user);
 		
 	}
+
+	//更新头像
+	public void updateImg(String name,String src) {
+		dao.updateImg(name,src);
+		
+	}
 }

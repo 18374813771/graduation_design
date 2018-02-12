@@ -32,9 +32,13 @@
 			</div>
 			 <div  class="col-sm-offset-5 col-sm-4">
 				<div class="up-img-cover "  id="up-img-touch" >				
-	    			<img style="margin-top:-20px" data-am-popover="{content: '点击更换头像', trigger: 'hover focus'}" src="../img/default.jpg"  width="105" height="80" class="img-circle img-thumbnail">
+	    			<img style="margin-top:-20px" data-am-popover="{content: '点击更换头像', trigger: 'hover focus'}" 
+	    				src="${user.src}"  width="82" height="68" class="img-circle img-thumbnail">
 	   			</div>
+	   			<br><br>
 			</div>
+			<br>
+			<br>
 			<br>
 			<div  class="col-md-6">
 				<div class="input-group">
@@ -178,7 +182,7 @@
 	           contentType: false,  
 	           processData: false,
 	           success: function (data) {
-	           	alert(data);
+	        	   window.location.href ="${pageContext.request.contextPath}/toMyCenter.do";
 	           },
 	           error: function(data) { 
 	        	   return false;

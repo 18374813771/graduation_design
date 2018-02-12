@@ -106,32 +106,45 @@ public class UserController{
 	@RequestMapping(value ="/saveHeaderPic.do", method = RequestMethod.POST)
 	public void saveHeaderPic(@RequestParam("upload-file") CommonsMultipartFile file,
 			HttpServletRequest request, HttpServletResponse response) throws IOException {
-	        String resMsg = "";
+	        String msg="";
 	    try {
-
-	        long  startTime=System.currentTimeMillis();
-	       
-	        System.out.println("fileName："+file.getOriginalFilename());
-//	                    流读取文件只能用绝对路径
-//	        String path="../../../../webapp/img/"+new Date().getTime()+file.getOriginalFilename();
-	        //动态获取绝对路径
-	        String path=request.getServletContext().getRealPath("/img/")+"\\"+new Date().getTime()+file.getOriginalFilename();
+	    	//获取新文件名
+	    	String newImg=new Date().getTime()+file.getOriginalFilename();
+	        // 流读取文件只能用绝对路径
+			//动态获取拼接绝对路径
+	        String path=request.getServletContext().getRealPath("/img/")+"\\"+newImg;
 //	        String path="C:\\Users\\Administrator\\git\\graduation_design\\Graduation_design\\src\\main\\webapp\\img/"+new Date().getTime()+file.getOriginalFilename();
-	        System.out.println("path:" + path);
-
+	        
 	        File newFile=new File(path);
 	        //通过CommonsMultipartFile的方法直接写文件
 	        file.transferTo(newFile);
-	        long  endTime=System.currentTimeMillis();
-	        System.out.println("运行时间："+String.valueOf(endTime-startTime)+"ms");
-	        resMsg = "1";
+	        
+	        //拼接用于存储的相对路径
+	        String src="../img/"+newImg;
+	        
+	        HttpSession session = request.getSession();
+	        User user = (User)session.getAttribute("user");
+	        //更新路径
+	        service.updateImg(user.getName(),src);
+	        
+	        
+	      //如果原图片不是默认图片，便删除
+	        if(!user.getSrc().equals("../img/default.jpg")){
+	        	String[] delFileName=user.getSrc().split("img/");
+	        	String delPath=request.getServletContext().getRealPath("/img/")+"\\"+delFileName[1];
+	        	
+	        	File delFile = new File(delPath);
+	        	//删除文件
+	        	if(delFile.exists()&&delFile.isFile())
+	        		delFile.delete();
+	        }
+	        user.setSrc(src);
+	        msg = "1";	        
 	    } catch (IllegalStateException e) {
-	        // TODO Auto-generated catch block
+	        
 	        e.printStackTrace();
-	        resMsg = "0";
 	    }
-	    response.getWriter().write(resMsg);
-
+	    response.getWriter().write(msg);
 	}
 
 }

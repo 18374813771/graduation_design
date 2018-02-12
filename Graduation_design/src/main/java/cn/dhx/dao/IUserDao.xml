@@ -15,4 +15,7 @@
 	<update id="updateUserInfo">
 	   	update user set age=#{age},telephone=#{telephone},sex=#{sex} where name=#{name}
 	</update>
+	<update id="updateImg">
+	   	update user set src=#{1} where name=#{0}
+	</update>
 </mapper>

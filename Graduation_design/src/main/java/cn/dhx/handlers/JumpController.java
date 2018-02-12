@@ -33,14 +33,5 @@ public class JumpController {
 		
 		return "/WEB-INF/myCenter.jsp";
 	}
-	//修改头像
-	@RequestMapping("/toUpChatHead.do")
-	public String toUpChatHead(){
-		return "/WEB-INF/upChatHead.jsp";
-	}
-	//修改头像2
-	@RequestMapping("/toTest.do")
-	public String toTest(){
-		return "/WEB-INF/test.jsp";
-	}
+	
 }

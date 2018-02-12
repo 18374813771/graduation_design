@@ -8,4 +8,6 @@ public interface IUserDao {
 	public User getUserInfo(String name);
 
 	public void updateUserInfo(User user);
+
+	public void updateImg(String name,String src);
 }

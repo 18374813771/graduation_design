@@ -8,4 +8,5 @@ public interface IUserService {
 	public boolean checkPassword(String name, String password);
 	public User getUser(String name);
 	public void updateUserInfo(User user);
+	public void updateImg(String name,String src);
 }

@@ -24,8 +24,8 @@
 			$("#d1").find(".msg").remove(); //删除以前的提示				
 			var nameVal=$.trim(this.value);
 			var regName=/[~#^&!*()<>:;[]’”{}   ]/;
-			if(nameVal==""||nameVal.length<3||regName.test(nameVal)){
-				var errorMessage="姓名非空，长度6位以上，不包含特殊字符！";
+			if(nameVal==""||nameVal.length<2||regName.test(nameVal)){
+				var errorMessage="姓名非空，长度2位以上，不包含特殊字符！";
 				
 				$("#d1").append("<span class='msg onError'>" + errorMessage + "</span>");		
 			}
