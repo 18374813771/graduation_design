@@ -86,6 +86,12 @@
             <version>${spring.version}</version>
         </dependency> 
         
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+        </dependency>
+        
      <!--mybatis spring 插件 -->
         <dependency>
             <groupId>org.mybatis</groupId>
@@ -130,7 +136,12 @@
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
         </dependency>
-
+		<!-- 缓存管理 -->
+		<dependency>
+		    <groupId>redis.clients</groupId>
+		    <artifactId>jedis</artifactId>
+		    <version>2.5.2</version>
+		</dependency>
 
         <!-- 格式化对象，方便输出日志 -->
         <dependency>

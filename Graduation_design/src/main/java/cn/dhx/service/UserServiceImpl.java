@@ -2,22 +2,29 @@ package cn.dhx.service;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import cn.dhx.beans.User;
 import cn.dhx.dao.IUserDao;
-@Service("UserService")
+import cn.dhx.jedis.JedisClient;
+@Service(value="UserService")
 public class UserServiceImpl implements IUserService {
 	@Resource(name="IUserDao")
 	private IUserDao dao;
+	@Resource(name="JedisClientPool")
+	private JedisClient jedisClient;
 	
-
+	public void setJedisClient(JedisClient jedisClient) {
+		this.jedisClient = jedisClient;
+	}
 	public void setDao(IUserDao dao) {
 		this.dao = dao;
 	}
-	
-	@Override
+	//aop使用默认的事务
 	@Transactional
 	public void register(User user) {
 		dao.insertUser(user);
@@ -43,7 +50,33 @@ public class UserServiceImpl implements IUserService {
 	//获取用户信息
 	@Override
 	public User getUser(String name) {
-		return dao.getUserInfo(name);
+		//创建一个ObjectMapper操作json
+		ObjectMapper jackson = new ObjectMapper();
+		//先查缓存
+		try{
+			//查询出一个json类型的字符串
+			String jsonUser=jedisClient.hget("user", name);
+			
+			if(StringUtils.isNotBlank(jsonUser)){				
+				//反射把json字符串转化成对象
+				User user = jackson.readValue(jsonUser, User.class);
+				return user;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		//缓存中没有则去数据库中查
+		User user = dao.getUserInfo(name);
+		try{
+			//把user对象转化为json字符串
+			String userJson = jackson.writeValueAsString(user);
+			//把数据加入缓存
+			jedisClient.hset("user", name, userJson);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return user;
 	}
 	
 	//更新用户信息
