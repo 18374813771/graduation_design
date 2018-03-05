@@ -27,11 +27,15 @@ public class JumpController {
 		return "/WEB-INF/login.jsp";
 	}
 	
-	//去注册页面
+	//去个人中心
 	@RequestMapping("/toMyCenter.do")
 	public String toMyCenter(){
 		
 		return "/WEB-INF/myCenter.jsp";
 	}
-	
+	//写博客页面
+	@RequestMapping("/toBlog.do")
+	public String toBlog(){
+		return "/WEB-INF/blog.jsp";
+	}
 }

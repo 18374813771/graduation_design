@@ -46,7 +46,9 @@ public class UserController{
 			//用户头像默认路径
 			user.setSrc("../img/default.jpg");
 			service.register(user);
-			session.setAttribute("user", user);
+			//获取用户的全部信息
+			User newUser=service.getUser(name);
+			session.setAttribute("user", newUser);
 			return "/WEB-INF/index.jsp";
 		}else{										//用户名已存在，不可用
 			//用于数据回显
@@ -112,7 +114,7 @@ public class UserController{
 	    	String newImg=new Date().getTime()+file.getOriginalFilename();
 	        // 流读取文件只能用绝对路径
 			//动态获取拼接绝对路径
-	        String path=request.getServletContext().getRealPath("/img/")+"\\"+newImg;
+	        String path=request.getServletContext().getRealPath("/img/")+"/"+newImg;
 //	        String path="C:\\Users\\Administrator\\git\\graduation_design\\Graduation_design\\src\\main\\webapp\\img/"+new Date().getTime()+file.getOriginalFilename();
 	        
 	        File newFile=new File(path);

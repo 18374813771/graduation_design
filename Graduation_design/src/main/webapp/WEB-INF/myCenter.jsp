@@ -31,10 +31,16 @@
 				<h1 ><span style="color:olive;" >个人中心</span></h1><br><br>
 			</div>
 			 <div  class="col-sm-offset-5 col-sm-4">
-				<div class="up-img-cover "  id="up-img-touch" >				
-	    			<img style="margin-top:-20px" data-am-popover="{content: '点击更换头像', trigger: 'hover focus'}" 
-	    				src="${user.src}"  width="82" height="68" class="img-circle img-thumbnail">
-	   			</div>
+				<div class="up-img-cover "  id="up-img-touch" >	
+					<c:if test="${user==null}">	
+						<img style="margin-top:-20px" data-am-popover="{content: '点击更换头像', trigger: 'hover focus'}" 
+	    					src="../img/default.jpg"  width="82" height="68" class="img-circle img-thumbnail">
+	   				</c:if>			
+	    			<c:if test="${user!=null}">	
+						<img style="margin-top:-20px" data-am-popover="{content: '点击更换头像', trigger: 'hover focus'}" 
+	    					src="${user.src}"  width="82" height="68" class="img-circle img-thumbnail">
+	   				</c:if>
+	    		</div>
 	   			<br><br>
 			</div>
 			<br>
