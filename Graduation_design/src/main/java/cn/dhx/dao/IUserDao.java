@@ -10,4 +10,6 @@ public interface IUserDao {
 	public void updateUserInfo(User user);
 
 	public void updateImg(String name,String src);
+
+	public User getUserById(Integer id);
 }

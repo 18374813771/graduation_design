@@ -49,9 +49,10 @@
 </head>
 <body>
 		<jsp:include   page="head.jsp" flush="true"/>
+		
 	<div class="container" style="margin-top:100px">
-		<form action="/blogging.do" method="post" role="form">			
-		  	<div class="col-md-9">
+		<div class="col-md-9">
+			<form action="/blogging.do" method="post" role="form">					  	
 			  	<div class="input-group ">
 					<span class="input-group-addon">名称：</span>
 					<input type="text" id="blogName"  name="blogName" class="form-control" placeholder="输入文章标题" required >
@@ -65,10 +66,11 @@
 			  	<div class="btn-group btn-group-lg navbar-right">
 					<button id="btn1" type="submit" class="btn btn-default">发布博客</button>
 					<button id="btn2" type="submit" class="btn btn-default">取消</button>
-				</div>
-		  	</div>
-		  	
-		</form>
+				</div>		  			  	
+			</form>
+		</div>
+<!-- 		<用户部分，还没写> -->
+		<div  class="col-md-3"><span>用户</span><br><br><br><br></div>
 	</div>
 </body>
 </html>

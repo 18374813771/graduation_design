@@ -8,12 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * */
 @Controller
 public class JumpController {
-	//去主页
-	@RequestMapping("/toIndex.do")
-	public String toIndex(){
-		
-		return "/WEB-INF/index.jsp";
-	}
+	
 	//去注册页面
 	@RequestMapping("/toRegister.do")
 	public String toRegister(){

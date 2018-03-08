@@ -3,9 +3,30 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">   
 <mapper namespace="cn.dhx.dao.IBlogDao">
-	<insert id="insertBlog" >
-	   	  insert into blog(blog_name,blog_content,uid,read_count,praise_count,date) 
-	   	  value(#{blog_name},#{blog_content},#{uid},#{read_count},#{praise_count},#{date}) 
+	<insert id="insertBlog" parameterType="cn.dhx.beans.Blog">
+	   insert into blog(blog_name,blog_content,uid,date) 
+	   		  value(#{blog_name},#{blog_content},#{uid},#{date}) 
+	   	<!--返回自增的id  -->
+	   	<selectKey resultType="int" order="AFTER" keyProperty="id">  
+        	<![CDATA[ SELECT LAST_INSERT_ID() AS id ]]> 
+  		</selectKey>
+	</insert>
+	<!-- 新增一条阅读量记录 -->
+	<insert id ="insertRead_count">
+		insert into read_count(table_name,rid,count) value(#{0},#{1},#{2})
 	</insert>
 	
+	<select id="getBlog" resultType="Blog">
+		select * from blog order by id desc
+	</select>
+	<select id="getBlogById" resultType="Blog">
+		select * from blog where id = #{id}
+	</select>
+	<select id="getRead_count" resultType="java.lang.Integer">
+		select count from read_count where rid=#{bid}
+	</select>
+	<!-- 阅读记录加一 -->
+	<update id="updateRead_count">
+		update read_count set count=count+1 where rid=#{bid};
+	</update>
 </mapper>

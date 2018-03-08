@@ -107,4 +107,10 @@ public class UserServiceImpl implements IUserService {
 		//删除该user的缓存，再次用到时重新建立
 		jedisClient.hDel("user",name);
 	}
+	
+	//根据id查询用户信息
+	public User getUserById(Integer id) {
+		// TODO Auto-generated method stub
+		return dao.getUserById(id);
+	}
 }

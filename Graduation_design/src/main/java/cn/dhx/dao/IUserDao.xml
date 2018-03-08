@@ -11,6 +11,9 @@
 	<select id="getUserInfo" resultType="User">
 	   	  select * from user where name=#{name} 
 	</select>
+	<select id="getUserById" resultType="User">
+		  select * from user Where id=#{id}
+	</select>
 	
 	<update id="updateUserInfo">
 	   	update user set age=#{age},telephone=#{telephone},sex=#{sex} where name=#{name}

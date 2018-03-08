@@ -2,6 +2,8 @@ package cn.dhx.service;
 
 import java.util.List;
 
+import cn.dhx.beans.Blog;
+
 public interface IBlogService {
 	public List<String> getRealImages(String conetnt);
 
@@ -10,4 +12,12 @@ public interface IBlogService {
 	public String replaceContent(String content);
 
 	public void insertBlog(String blogName, String content, Integer uid);
+
+	public List<Blog> getBlog();
+
+	public Blog getBlogById(int id);
+
+	public void updateBlogRead_count(int id);
+
+	public int getBlogRead_count(int bid);
 }

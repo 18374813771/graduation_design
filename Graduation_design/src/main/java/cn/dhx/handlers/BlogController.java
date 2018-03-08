@@ -24,15 +24,19 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cn.dhx.beans.Blog;
 import cn.dhx.beans.User;
 import cn.dhx.service.IBlogService;
+import cn.dhx.service.IUserService;
 
 @Controller
 public class BlogController {
 	@Autowired
 	@Qualifier("blogService")
 	private IBlogService service;
-	
+	@Autowired
+	@Qualifier("UserService")
+	private IUserService userService;
 	//博客编辑文件上传
 	@RequestMapping(value="/blogImgUpload.do")
 	@ResponseBody
@@ -109,6 +113,42 @@ public class BlogController {
 		Integer uid=user.getId();
 		//执行新增博客操作
 		service.insertBlog(blogName,content,uid);
-		return "/toMyCenter.do";
+		return "/toIndex.do";
+	}
+	
+	//去主页
+	@RequestMapping("/toIndex.do")
+	public String toIndex(HttpServletRequest request){
+		//获取主页博客数据
+		List<Blog> blogs=service.getBlog();
+		for(Blog blog:blogs){
+			int bid = blog.getId();
+			//查询阅读量
+			int count = service.getBlogRead_count(bid);
+			blog.setRead_count(count);
+		}
+		request.setAttribute("blogs", blogs);
+		return "/WEB-INF/index.jsp";
+	}
+	
+	//具体博客页
+	@RequestMapping("/toShowBlog.do")
+	public String showBlog(HttpServletRequest request){
+		int id=Integer.parseInt(request.getParameter("id"));		
+		//查询博客信息
+		Blog blog = service.getBlogById(id);
+		int bid =blog.getId();
+		//该博客阅读量+1
+		service.updateBlogRead_count(bid);
+		//查询阅读量
+		int count = service.getBlogRead_count(bid);
+		blog.setRead_count(count);
+		
+		Integer uId=blog.getUid();		
+		//获取所看博客作者信息
+		User bUser = userService.getUserById(uId);
+		request.setAttribute("blog", blog);
+		request.setAttribute("bUser",bUser);
+		return "/WEB-INF/showBlog.jsp";
 	}
 }

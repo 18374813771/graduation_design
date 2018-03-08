@@ -9,4 +9,5 @@ public interface IUserService {
 	public User getUser(String name);
 	public void updateUserInfo(User user);
 	public void updateImg(String name,String src);
+	public User getUserById(Integer uId);
 }

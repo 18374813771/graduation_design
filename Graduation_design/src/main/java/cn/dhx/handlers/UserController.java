@@ -49,7 +49,7 @@ public class UserController{
 			//获取用户的全部信息
 			User newUser=service.getUser(name);
 			session.setAttribute("user", newUser);
-			return "/WEB-INF/index.jsp";
+			return "/toIndex.do";
 		}else{										//用户名已存在，不可用
 			//用于数据回显
 			String msg="用户名已存在，请更换";
@@ -79,7 +79,7 @@ public class UserController{
 			if(service.checkPassword(name,password)){	//密码正确
 				User user = service.getUser(name);
 				session.setAttribute("user", user);
-				return "/WEB-INF/index.jsp";
+				return "toIndex.do";
 			}else{										//密码错误
 				String msg="你输入的用户名或密码错误，请重新输入";
 				request.setAttribute("name", name);

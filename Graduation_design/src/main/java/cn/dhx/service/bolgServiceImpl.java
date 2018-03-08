@@ -101,10 +101,36 @@ public class bolgServiceImpl implements IBlogService {
 		blog.setBlog_name(blogName);
 		blog.setBlog_content(content);
 		blog.setUid(uid);
-		blog.setRead_count(0);
-		blog.setPraise_count(0);
 		blog.setDate(date);
+		//增加一条博客记录
 		dao.insertBlog(blog);
+		int bId = blog.getId();
+		//新增一条阅读量记录
+		dao.insertRead_count("blog",bId,0);
+	}
+
+	//获取所有博客信息
+	@Override
+	public List<Blog> getBlog() {
 		
+		return dao.getBlog();
+	}
+
+	//查询博客信息
+	public Blog getBlogById(int id) {
+
+		return dao.getBlogById(id);
+	}
+	
+	//每次点击阅读量加一
+	public void updateBlogRead_count(int bid) {
+		dao.updateRead_count(bid);
+		
+	}
+
+	//获取博客阅读量
+	public int getBlogRead_count(int bid) {
+		
+		return dao.getRead_count(bid);
 	}
 }

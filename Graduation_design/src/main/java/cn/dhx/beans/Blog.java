@@ -8,7 +8,6 @@ public class Blog {
 	private int read_count;
 	private int praise_count;
 	private String date;
-	
 	public Integer getId() {
 		return id;
 	}
@@ -33,6 +32,7 @@ public class Blog {
 	public void setUid(Integer uid) {
 		this.uid = uid;
 	}
+	
 	public int getRead_count() {
 		return read_count;
 	}
@@ -56,5 +56,7 @@ public class Blog {
 		return "Blog [id=" + id + ", blog_name=" + blog_name + ", blog_content=" + blog_content + ", uid=" + uid
 				+ ", read_count=" + read_count + ", praise_count=" + praise_count + ", date=" + date + "]";
 	}
+	
+	
 	
 }
