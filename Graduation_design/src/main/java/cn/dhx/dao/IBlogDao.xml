@@ -15,6 +15,10 @@
 	<insert id ="insertRead_count">
 		insert into read_count(table_name,rid,count) value(#{0},#{1},#{2})
 	</insert>
+	<!-- 新增一条点赞记录 -->
+	<insert id="insertPraise">
+		insert into praise(tab,pid,uid) value(#{0},#{1},#{2})
+	</insert>
 	
 	<select id="getBlog" resultType="Blog">
 		select * from blog order by id desc
@@ -25,8 +29,11 @@
 	<select id="getRead_count" resultType="java.lang.Integer">
 		select count from read_count where rid=#{bid}
 	</select>
+	<select id="getPraise_count" resultType="java.lang.Integer">
+		select  count(*) from praise where pid=#{0}
+	</select>
 	<!-- 阅读记录加一 -->
-	<update id="updateRead_count">
+	<update id="updateRead_count" >
 		update read_count set count=count+1 where rid=#{bid};
 	</update>
 </mapper>

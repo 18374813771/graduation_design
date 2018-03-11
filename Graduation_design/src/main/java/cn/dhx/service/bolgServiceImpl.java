@@ -133,4 +133,16 @@ public class bolgServiceImpl implements IBlogService {
 		
 		return dao.getRead_count(bid);
 	}
+	
+	//增加博客的一条点赞记录
+	public void insertPraise(int blogId, Integer uid) {
+		dao.insertPraise("blog",blogId,uid);
+		
+	}
+
+	//查询某博客的点赞数量
+	public int getPraise_count(int blogId) {
+		
+		return dao.getPraise_count(blogId);
+	}
 }

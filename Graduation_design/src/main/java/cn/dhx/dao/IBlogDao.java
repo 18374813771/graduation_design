@@ -18,6 +18,10 @@ public interface IBlogDao {
 
 	public int getRead_count(int bid);
 
+	public void insertPraise(String string, int blogId, Integer uid);
+
+	public int getPraise_count(int blogId);
+
 	
 
 }

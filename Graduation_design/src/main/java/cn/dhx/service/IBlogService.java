@@ -20,4 +20,8 @@ public interface IBlogService {
 	public void updateBlogRead_count(int id);
 
 	public int getBlogRead_count(int bid);
+
+	public void insertPraise(int blogId, Integer id);
+
+	public int getPraise_count(int blogId);
 }

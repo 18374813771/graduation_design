@@ -10,10 +10,12 @@ import java.util.Map;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -147,8 +149,30 @@ public class BlogController {
 		Integer uId=blog.getUid();		
 		//获取所看博客作者信息
 		User bUser = userService.getUserById(uId);
+		
+		//判断用户是否点赞
+		
+		//获取点赞的条数
+		
 		request.setAttribute("blog", blog);
 		request.setAttribute("bUser",bUser);
 		return "/WEB-INF/showBlog.jsp";
+	}
+	//对于用户点赞的处理
+	@RequestMapping(value="ajaxPraise.do",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public String praiseBlog(HttpServletRequest request) throws IOException{
+		//从request中获取博客id
+		int blogId=Integer.parseInt(request.getParameter("blogId"));
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("user");
+		//新增一条点赞记录
+		service.insertPraise(blogId,user.getId());
+		//获取此博客赞的数量
+		int praise_count=service.getPraise_count(blogId);
+		//定义点赞数量的json字符串
+		String praiseCount="{\"count\":"+praise_count+"}";
+		
+		return praiseCount;
 	}
 }
