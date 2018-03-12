@@ -128,6 +128,8 @@ public class BlogController {
 			//查询阅读量
 			int count = service.getBlogRead_count(bid);
 			blog.setRead_count(count);
+			int praiseCount=service.getPraise_count(bid);
+			blog.setPraise_count(praiseCount);
 		}
 		request.setAttribute("blogs", blogs);
 		return "/WEB-INF/index.jsp";
@@ -136,24 +138,36 @@ public class BlogController {
 	//具体博客页
 	@RequestMapping("/toShowBlog.do")
 	public String showBlog(HttpServletRequest request){
+		//接收博客id
 		int id=Integer.parseInt(request.getParameter("id"));		
 		//查询博客信息
-		Blog blog = service.getBlogById(id);
-		int bid =blog.getId();
+		Blog blog = service.getBlogById(id);		
 		//该博客阅读量+1
-		service.updateBlogRead_count(bid);
+		service.updateBlogRead_count(id);
 		//查询阅读量
-		int count = service.getBlogRead_count(bid);
+		int count = service.getBlogRead_count(id);
 		blog.setRead_count(count);
 		
 		Integer uId=blog.getUid();		
 		//获取所看博客作者信息
 		User bUser = userService.getUserById(uId);
 		
-		//判断用户是否点赞
-		
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("user");
+		//获取当前登录用户id
+		Integer userId = user.getId(); 
+		//判断当前用户是否点赞
+		Boolean isPraise = service.isBlogPraise(id,userId);
+		String praiseStatus = null;
+		if(isPraise){
+			praiseStatus="已赞";
+		}else{
+			praiseStatus="点赞";
+		}
 		//获取点赞的条数
-		
+		int praiseCount = service.getPraise_count(id); 
+		blog.setPraise_count(praiseCount);
+		request.setAttribute("praiseStatus", praiseStatus);
 		request.setAttribute("blog", blog);
 		request.setAttribute("bUser",bUser);
 		return "/WEB-INF/showBlog.jsp";
@@ -168,6 +182,23 @@ public class BlogController {
 		User user = (User) session.getAttribute("user");
 		//新增一条点赞记录
 		service.insertPraise(blogId,user.getId());
+		//获取此博客赞的数量
+		int praise_count=service.getPraise_count(blogId);
+		//定义点赞数量的json字符串
+		String praiseCount="{\"count\":"+praise_count+"}";
+		
+		return praiseCount;
+	}
+	//对于用户取消赞的处理
+	@RequestMapping("ajaxNotPraise.do")
+	@ResponseBody
+	public String notPraiseBlog(HttpServletRequest request) throws IOException{
+		//从request中获取博客id
+		int blogId=Integer.parseInt(request.getParameter("blogId"));
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("user");
+		//删除该用户点赞记录
+		service.deletePraise(blogId,user.getId());
 		//获取此博客赞的数量
 		int praise_count=service.getPraise_count(blogId);
 		//定义点赞数量的json字符串

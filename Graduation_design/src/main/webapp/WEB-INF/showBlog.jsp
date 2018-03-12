@@ -41,7 +41,27 @@
 					}
 				})
 			}else{
-				$("#praise").html("点赞");
+				$.ajax({
+					type :"POST",
+					url  :"${pageContext.request.contextPath}/ajaxNotPraise.do?time"+new Date().getTime(),
+					data :{
+							"blogId":blogId
+					},
+					
+					success : function(backData){
+						//把json字符串转出json对象
+						var jsonData=JSON.parse(backData);
+						
+						//更改点赞数量
+						$("#praiseCount").html(jsonData.count);
+						$("#praise").html("点赞");
+						
+					},
+					error:function(){
+						alert("错误信息");
+					}
+				})
+				
 			}
 			
 		})
@@ -71,8 +91,9 @@
 			<br><br>
 			<!-- 底部信息 -->
 			<div Style="font-size: 15px;border-top:solid 1px green;">
-				发布日期:${blog.date} &nbsp&nbsp&nbsp&nbsp 
-				<a href="#"><span id="praise">点赞</span> <span id="praiseCount" class="badge">0</span></a>
+				发布日期:${blog.date} &nbsp&nbsp&nbsp&nbsp
+				<!--让它移上去变成手，并不会跳转  --> 
+				<a href="javascript:;"><span id="praise">${praiseStatus}</span> <span id="praiseCount" class="badge">${blog.praise_count}</span></a>
 				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 				<a href="#">写评论 </a> 
 				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 

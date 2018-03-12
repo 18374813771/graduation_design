@@ -139,10 +139,26 @@ public class bolgServiceImpl implements IBlogService {
 		dao.insertPraise("blog",blogId,uid);
 		
 	}
-
+	//删除该博客该用户的点赞记录
+	public void deletePraise(int bid, Integer uid) {
+		dao.deletePraise("blog",bid,uid);
+		
+	}
 	//查询某博客的点赞数量
 	public int getPraise_count(int blogId) {
 		
 		return dao.getPraise_count(blogId);
 	}
+	
+	//判断一个博客是否已赞
+	public Boolean isBlogPraise(int bid,int uid) {
+		//如果有记录则表示该用户对博客已点赞
+		if(dao.selectPraise("blog",bid,uid)==null){
+			return false;
+		}
+		return true;
+	}
+
+	
+
 }

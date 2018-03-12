@@ -24,4 +24,8 @@ public interface IBlogService {
 	public void insertPraise(int blogId, Integer id);
 
 	public int getPraise_count(int blogId);
+
+	public Boolean isBlogPraise(int bid,int uid);
+
+	public void deletePraise(int bid, Integer uid);
 }

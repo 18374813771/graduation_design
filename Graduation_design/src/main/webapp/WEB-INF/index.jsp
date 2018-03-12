@@ -14,11 +14,11 @@
 		<div class="col-md-9" style="margin-left:100px; margin-top:20px">			
 			<c:forEach items="${blogs}" var="blog">
 				<div>
-					<a href="/toShowBlog.do?id=${blog.id}">
+					<a style="color:black" href="/toShowBlog.do?id=${blog.id}">
 						<span style="font-size: 22px">${blog.blog_name}</span>
 					</a>
 					<br>
-					<span>发布日期:${blog.date} &nbsp阅读量 :${blog.read_count} &nbsp点赞数 :${blog.praise_count}</span>
+					<span>发布日期:${blog.date} &nbsp阅读量 :${blog.read_count} &nbsp获赞数 :${blog.praise_count}</span>
 				</div>
 				<br>
 			</c:forEach>

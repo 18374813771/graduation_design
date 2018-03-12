@@ -29,11 +29,20 @@
 	<select id="getRead_count" resultType="java.lang.Integer">
 		select count from read_count where rid=#{bid}
 	</select>
+	<!--获取博客的点赞数量  -->
 	<select id="getPraise_count" resultType="java.lang.Integer">
 		select  count(*) from praise where pid=#{0}
 	</select>
+	<select id="selectPraise" resultType="Praise">
+		select * from praise where tab=#{0} and pid=#{1} and uid=#{2} 
+	</select>
+	
 	<!-- 阅读记录加一 -->
 	<update id="updateRead_count" >
 		update read_count set count=count+1 where rid=#{bid};
 	</update>
+	
+	<delete id="deletePraise">
+		delete from praise where tab=#{0} and pid=#{1} and uid=#{2}
+	</delete>
 </mapper>
