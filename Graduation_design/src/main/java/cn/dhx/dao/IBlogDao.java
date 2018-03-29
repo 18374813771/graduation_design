@@ -3,6 +3,7 @@ package cn.dhx.dao;
 import java.util.List;
 
 import cn.dhx.beans.Blog;
+import cn.dhx.beans.Comment;
 import cn.dhx.beans.Praise;
 
 public interface IBlogDao {
@@ -26,6 +27,8 @@ public interface IBlogDao {
 	public Praise selectPraise(String tab,int bid, int uid);
 
 	public void deletePraise(String string, int bid, Integer uid);
+
+	public void insertComment(Comment comment);
 
 	
 

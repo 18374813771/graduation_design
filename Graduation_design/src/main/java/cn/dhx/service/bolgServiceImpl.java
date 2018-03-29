@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import cn.dhx.beans.Blog;
+import cn.dhx.beans.Comment;
 import cn.dhx.dao.IBlogDao;
 
 @Service("blogService")
@@ -89,12 +90,12 @@ public class bolgServiceImpl implements IBlogService {
 		return newContent;
 	}
 	
+
+	
 	//新增博客
 	@Override
-	public void insertBlog(String blogName, String content, Integer uid) {
-		//获取系统时间
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
-		String date=df.format(new Date());
+	public void insertBlog(String blogName, String content, Integer uid) {		
+		String date = this.getCurrentDate();		
 		
 		Blog blog = new Blog();
 		
@@ -158,7 +159,30 @@ public class bolgServiceImpl implements IBlogService {
 		}
 		return true;
 	}
-
 	
+	//新增一条评论
+	@Override
+	public void insertComment(String commentContent,int uid, int blogId,int topId,String topStyle) {
+		//封装一个评论对象
+		Comment comment = new Comment();
+		String date = this.getCurrentDate();
+		comment.setComment_content(commentContent);
+		comment.setUid(uid);
+		comment.setPraise_count(0);
+		comment.setStyle("blog");
+		comment.setMaster_id(blogId);
+		comment.setDate(date);
+		comment.setTopId(topId);
+		comment.setTopStyle(topStyle);
+		
+		dao.insertComment(comment);
+	}
+
+	//获取当前时间
+	public String getCurrentDate(){
+		//获取系统时间
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+		return df.format(new Date());
+	}
 
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,6 +171,7 @@ public class BlogController {
 		request.setAttribute("bUser",bUser);
 		return "/WEB-INF/showBlog.jsp";
 	}
+	
 	//对于用户点赞的处理
 	@RequestMapping(value="ajaxPraise.do",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
@@ -205,5 +205,22 @@ public class BlogController {
 		String praiseCount="{\"count\":"+praise_count+"}";
 		
 		return praiseCount;
+	}
+	
+	//处理用户的评论
+	@RequestMapping("commentSubmit.do")
+	@ResponseBody
+	public String commentSubmit(HttpServletRequest request){
+		String commentContent = request.getParameter("commentCotent");
+		//从request中获取博客id
+		int blogId=Integer.parseInt(request.getParameter("blogId"));
+		
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("user");
+		int uid = user.getId();
+		int topId = blogId;
+		String topStyle = "blog";
+		service.insertComment(commentContent,uid,blogId,topId,topStyle);
+		return commentContent;
 	}
 }

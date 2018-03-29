@@ -28,4 +28,6 @@ public interface IBlogService {
 	public Boolean isBlogPraise(int bid,int uid);
 
 	public void deletePraise(int bid, Integer uid);
+
+	public void insertComment(String commentContent,int uid, int blogId,int topId,String topStyle);
 }

@@ -19,6 +19,11 @@
 	<insert id="insertPraise">
 		insert into praise(tab,pid,uid) value(#{0},#{1},#{2})
 	</insert>
+	<!--新增一条评论记录  -->
+	<insert id="insertComment" parameterType="Comment">
+		insert into comment(comment_content,uid,praise_count,style,master_id,date,topId,topStyle)
+			value(#{comment_content},#{uid},#{praise_count},#{style},#{master_id},#{date},#{topId},#{topStyle})
+	</insert>
 	
 	<select id="getBlog" resultType="Blog">
 		select * from blog order by id desc
