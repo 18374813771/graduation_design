@@ -16,10 +16,14 @@
 		<!-- 注册组件扫描器 -->
 		<context:component-scan base-package="cn.dhx.service"></context:component-scan>
 		<context:component-scan base-package="cn.dhx.jedis"></context:component-scan>
-	<!-- 注册Service -->	
-<!-- 	<bean id="UserService" class="cn.dhx.service.UserServiceImpl"> -->
-<!-- 		<property name="dao" ref="IUserDao"></property> -->
-<!-- 	</bean> -->
+		<!-- websocket相关扫描，主要扫描：WebSocketConfig  如果前面配置能扫描到此类则可以不加 -->
+<!-- 		<context:component-scan base-package="cn.dhx.webSocket"/> -->
+		
+		<!-- 注册Service -->	
+		<bean id="UserServiceImpl" class="cn.dhx.service.UserServiceImpl">
+			<property name="dao" ref="IUserDao"></property>
+		</bean>
+
 		<!--注册redis连接池  -->
 		<bean id="JedisPool" class="redis.clients.jedis.JedisPool">
 			<constructor-arg  name="host" value="${redis.host}"></constructor-arg>

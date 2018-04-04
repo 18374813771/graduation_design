@@ -6,7 +6,6 @@
 		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
 		 					http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
 		 					version="2.5">
-
  <!-- 注册字符编码过滤器 -->
     <filter>
         <filter-name>encodingFilter</filter-name>
@@ -36,6 +35,8 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+	
+    
     <!--Spring MVC 配置servlet,中央调度器 -->
     <servlet>
         <servlet-name>springDispatcherServlet</servlet-name>
@@ -45,10 +46,12 @@
             <param-value>classpath:/spring-mvc.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+	    
     </servlet>
-
-    <servlet-mapping>
-        <servlet-name>springDispatcherServlet</servlet-name>
+	<servlet-mapping>
+        <servlet-name>springDispatcherServlet</servlet-name>       
         <url-pattern>*.do</url-pattern>
     </servlet-mapping>
+    
 </web-app>

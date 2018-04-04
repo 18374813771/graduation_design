@@ -18,13 +18,16 @@ import org.springframework.stereotype.Service;
 
 import cn.dhx.beans.Blog;
 import cn.dhx.beans.Comment;
+import cn.dhx.beans.User;
 import cn.dhx.dao.IBlogDao;
+import cn.dhx.dao.IUserDao;
 
 @Service("blogService")
-public class bolgServiceImpl implements IBlogService {
+public class BolgServiceImpl implements IBlogService {
 	@Resource(name="IBlogDao")
 	IBlogDao dao;
-	
+	@Resource(name="IUserDao")
+	IUserDao userDao;
 	//获取用户用到的图片
 	public List<String> getRealImages(String content) {
 		List<String> images = new ArrayList<String>();
@@ -148,7 +151,7 @@ public class bolgServiceImpl implements IBlogService {
 	//查询某博客的点赞数量
 	public int getPraise_count(int blogId) {
 		
-		return dao.getPraise_count(blogId);
+		return dao.getPraise_count(blogId,"blog");
 	}
 	
 	//判断一个博客是否已赞
@@ -162,14 +165,14 @@ public class bolgServiceImpl implements IBlogService {
 	
 	//新增一条评论
 	@Override
-	public void insertComment(String commentContent,int uid, int blogId,int topId,String topStyle) {
+	public void insertComment(String commentContent,int uid, int blogId,String style,
+									 int topId,String topStyle) {
 		//封装一个评论对象
 		Comment comment = new Comment();
 		String date = this.getCurrentDate();
 		comment.setComment_content(commentContent);
 		comment.setUid(uid);
-		comment.setPraise_count(0);
-		comment.setStyle("blog");
+		comment.setStyle(style);
 		comment.setMaster_id(blogId);
 		comment.setDate(date);
 		comment.setTopId(topId);
@@ -178,11 +181,54 @@ public class bolgServiceImpl implements IBlogService {
 		dao.insertComment(comment);
 	}
 
+	//获取一条博客所有的评论信息
+	@Override
+	public List<Comment> getComments(int id,int userId) {
+		String topStyle = "blog";
+		List<Comment> comments = dao.getCommentByTop(id,topStyle);
+		int praiseCount = 0;
+		User answerUser;
+		User answeredUser;
+		Integer answeredUserId;
+		for(Comment comment:comments){
+			//获取评论的点赞数
+			praiseCount = dao.getPraise_count(comment.getId(), "comment");
+			comment.setPraiseCount(praiseCount);
+			
+			//如果评论的对象和顶级对象一样，则就是评论顶级对象
+			if(comment.getStyle().equals(comment.getTopStyle())){
+				//得到评论者的姓名
+				answerUser = userDao.getUserById(comment.getUid());
+				comment.setAnswerUser(answerUser);
+			}else {
+				//得到评论者的姓名
+				answerUser = userDao.getUserById(comment.getUid());
+				comment.setAnswerUser(answerUser);
+				
+				//得到被评论者的id
+				answeredUserId = dao.getCommentUid(comment.getStyle(),comment.getMaster_id());
+				answeredUser = userDao.getUserById(answeredUserId);
+				comment.setAnsweredUser(answeredUser);
+			}
+			//判断当前用户对此评论是否点过赞
+			if(dao.selectPraise("comment",comment.getId(),userId)==null){
+				comment.setPraiseStatus("点赞");
+			}else{
+				comment.setPraiseStatus("已赞");
+			}
+			
+		}
+		return comments;
+	}
+	
+	
 	//获取当前时间
 	public String getCurrentDate(){
 		//获取系统时间
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
 		return df.format(new Date());
 	}
+
+	
 
 }

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -166,14 +167,22 @@ public class BlogController {
 		//获取点赞的条数
 		int praiseCount = service.getPraise_count(id); 
 		blog.setPraise_count(praiseCount);
+		
+		//获取该博客的评论
+//		List<Comment> comments = service.getComments(id,userId);
+		//博客下的评论数量
+//		int answerCount =comments.size();
+		
 		request.setAttribute("praiseStatus", praiseStatus);
 		request.setAttribute("blog", blog);
 		request.setAttribute("bUser",bUser);
+//		request.setAttribute("comments", comments);
+//		request.setAttribute("answerCount", answerCount);
 		return "/WEB-INF/showBlog.jsp";
 	}
 	
 	//对于用户点赞的处理
-	@RequestMapping(value="ajaxPraise.do",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value="ajaxPraise.do")
 	@ResponseBody
 	public String praiseBlog(HttpServletRequest request) throws IOException{
 		//从request中获取博客id
@@ -186,7 +195,6 @@ public class BlogController {
 		int praise_count=service.getPraise_count(blogId);
 		//定义点赞数量的json字符串
 		String praiseCount="{\"count\":"+praise_count+"}";
-		
 		return praiseCount;
 	}
 	//对于用户取消赞的处理
@@ -218,9 +226,10 @@ public class BlogController {
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("user");
 		int uid = user.getId();
+		String style = "blog";
 		int topId = blogId;
 		String topStyle = "blog";
-		service.insertComment(commentContent,uid,blogId,topId,topStyle);
+		service.insertComment(commentContent,uid,blogId,style,topId,topStyle);
 		return commentContent;
 	}
 }

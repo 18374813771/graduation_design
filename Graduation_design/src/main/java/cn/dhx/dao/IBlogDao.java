@@ -22,13 +22,17 @@ public interface IBlogDao {
 
 	public void insertPraise(String string, int blogId, Integer uid);
 
-	public int getPraise_count(int blogId);
+	public int getPraise_count(int blogId,String tab);
 
 	public Praise selectPraise(String tab,int bid, int uid);
 
 	public void deletePraise(String string, int bid, Integer uid);
 
 	public void insertComment(Comment comment);
+
+	public List<Comment> getCommentByTop(int id, String topStyle);
+
+	public Integer getCommentUid(String style, Integer master_id);
 
 	
 

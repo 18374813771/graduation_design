@@ -1,23 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<beans 	xmlns="http://www.springframework.org/schema/beans"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns:context="http://www.springframework.org/schema/context"
-		xmlns:aop="http://www.springframework.org/schema/aop"
-		xmlns:tx="http://www.springframework.org/schema/tx"
-		xsi:schemaLocation="http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context
-		http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/aop
-		http://www.springframework.org/schema/aop/spring-aop.xsd
-		http://www.springframework.org/schema/tx
-		http://www.springframework.org/schema/tx/spring-tx.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
-<bean id="multipartResolver" 
-	class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-	<property name="defaultEncoding" value="UTF-8" />
-</bean>
+<!-- <beans 	xmlns="http://www.springframework.org/schema/beans" -->
+<!-- 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" -->
+<!-- 		xmlns:context="http://www.springframework.org/schema/context" -->
+<!-- 		xmlns:websocket="http://www.springframework.org/schema/websocket" -->
+<!-- 		xsi:schemaLocation="http://www.springframework.org/schema/beans -->
+<!-- 		http://www.springframework.org/schema/beans/spring-beans.xsd -->
+<!-- 		http://www.springframework.org/schema/context -->
+<!-- 		http://www.springframework.org/schema/context/spring-context.xsd -->
+<!-- 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   -->
+<!--         http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd"> -->
+
+	<bean id="multipartResolver" 
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+<!-- 	<bean id="iblogservice" class="cn.dhx.service.BolgServiceImpl"></bean> -->
+<!-- 	<bean id="MyWebSocketHandler" class="cn.dhx.webSocket.MyWebSocketHandler"> -->
+<!-- 		<property name="service" ref="iblogservice" /> -->
+<!-- 	</bean> -->
+	
+	
 <!-- 注册组件扫描器 -->
 	<context:component-scan base-package="cn.dhx.handlers"></context:component-scan>
+	<!-- websocket相关扫描，主要扫描：WebSocketConfig  如果前面配置能扫描到此类则可以不加 -->
+	<context:component-scan base-package="cn.dhx.webSocket"/>
+	
+	
+	<mvc:annotation-driven/>
+<!-- websocketBeans配置 -->
+<!-- 	<bean id="websocket" class="cn.dhx.webSocket.MyWebSocketHandler"/>   -->
+	  
+<!-- 	<websocket:handlers>   -->
+<!-- 	    <websocket:mapping path="/websocket" handler="websocket"/>   -->
+<!-- 	    <websocket:handshake-interceptors>   -->
+<!-- 	    <bean class="cn.dhx.webSocket.HandshakeInterceptor"/>   -->
+<!-- 	    </websocket:handshake-interceptors>   -->
+<!-- 	</websocket:handlers> -->
+
 </beans>

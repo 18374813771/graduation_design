@@ -5,6 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
 <link rel="stylesheet" href="../libs/bootstrap-3.3.7-dist/css/bootstrap.min.css">
 <script src="../libs/jquery/jquery-1.8.3.js"></script>
 <script src="../libs/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
@@ -25,8 +26,7 @@
 					url  :"${pageContext.request.contextPath}/ajaxPraise.do?time="+new Date().getTime(),
 					data :{
 							"blogId":blogId
-					},
-					
+					},					
 					success : function(backData){
 						//把json字符串转出json对象
 						var jsonData=JSON.parse(backData);
@@ -77,38 +77,75 @@
 		});
 		//评论，提交数据
 		$("#commentSubmit").click(function(){
-			var commentContent = $("#comment2").val();
+			var commentContent = $("#comment2").val().trim();
 			//如果评论没输入任何内容，则不发送请求，并隐藏输入框
-			if(commentContent==null){
+			if(commentContent==null||commentContent==""){
 				$("#DComment").hide();
-				return ;
+				return false;
+			} else {
+				var blogId=$("#blogId").text();
+				$.ajax({
+					type :"POST",
+					url  :"${pageContent.request.contentPath}/commentSubmit.do?time="+new Date().getTime(),
+					data :{
+						"commentCotent" : commentContent,
+						"blogId" : blogId
+					},
+					success : function(backData){
+						$("#DComment").hide();
+						//隐藏评论输入框
+						//显示评论
+					},
+					error   : function(){
+						console.log("错误信息");
+					}
+				});
 			}
-			var blogId=$("#blogId").text();
-			$.ajax({
-				type :"POST",
-				url  :"${pageContent.request.contentPath}/commentSubmit.do?time="+new Date().getTime(),
-				data :{
-					"commentCotent" : commentContent,
-					"blogId" : blogId
-				},
-				success : function(backData){
-					$("#DComment").hide();
-					//隐藏评论输入框
-					//显示评论
-				},
-				error   : function(){
-					console.log("错误信息");
-				}
-			});
+			
 		})
 	})
 	
 	//点击查看评论显示隐藏
 	$(function(){
+		//第一次进入该页时建立连接，使用websocket实时更新评论数据
+		var webSocket = null;
+		//判断浏览器是否支持websocket
+		if('WebSocket' in window){
+			webSocket = new WebSocket("ws:localhost:8080/websocket.do")
+		}else{					
+		    alert('Not support websocket')  
+		}
+		//连接发生错误的回调方法  
+        webSocket.onerror = function(){  
+          setMessageInnerHTML("error");  
+        };
+        //连接成功时发送博客id和当前用户id请求评论数据
+		webSocket.onopen = function(){	
+			var blogId = $("#blogId").text(); 
+			var userId = $("#userId").text();
+			var message =blogId+","+userId;
+	        webSocket.send(message);
+		}
+       
+		webSocket.onmessage = function(evnt) {
+			var comments = JSON.parse(evnt.data);
+			console.log(comments);
+//             $("#msg").html($("#msg").html() + "<br/>" + evnt.data);
+        };
+
+        webSocket.onclose = function(evt) {
+        	console.log("WebSocket连接关闭！");
+		};
+		 
+		window.onbeforeunload = function(event) {
+		    console.log("关闭WebSocket连接！");
+		    webSocket.close();
+		}
+	      //控制折叠
 		$("#content").click(function(){
 			var content = $("#content").text();
-			if(content=="查看评论"){
-				$("#commentContent").show();
+			$("#commentContent").show();					
+			if(content=="查看评论"){	  
 				$("#content").html("折叠评论");
 			}else{
 				$("#commentContent").hide();
@@ -147,7 +184,7 @@
 				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 				<a href="javascript:;"><span id="comment">写评论 </span></a> 
 				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 
-				<a href="javascript:;"><span id="content">查看评论</span> <span  class="badge">0</span></a>
+				<a href="javascript:;"><span id="content">查看评论</span> <span  class="badge">${answerCount}</span></a>
 							
 			</div><br><br>
 			<!--点击评论  -->
@@ -158,43 +195,42 @@
 			
 			<!--显示评论内容 -->
 			<div id="commentContent" style="display:none">
-				<div >
-					<div>
-						<img style="margin-top:10px" src="${bUser.src}"  width="41" height="34" class="img-circle img-thumbnail">
-						<span style="font-size: 20px;margin-bmargin-bottom:-10px">xxx评论：</span>
+				<c:forEach items="${comments}" var="comment">
+					<div >
+						<div>
+							<img style="margin-top:10px" src="${comment.answerUser.src }"  width="41" height="34" class="img-circle img-thumbnail">
+							<!-- 分三种情况，是博主，不是博主评论博客，不是博主，评论评论 -->
+							<c:if test="${comment.answerUser.name.equals(bUser.name)}">
+								<span style="font-size: 16px;margin-bmargin-bottom:-10px">(博主)回答：</span>
+							</c:if>
+							<c:if test="${comment.answeredUser==null&&!comment.answerUser.name.equals(bUser.name)}">
+								<span style="font-size: 16px;margin-bmargin-bottom:-10px">${comment.answerUser.name}评论：</span>
+							</c:if>
+							<c:if test="${comment.answeredUser!=null&&!comment.answerUser.name.equals(bUser.name)}">
+								<span style="font-size: 16px;margin-bmargin-bottom:-10px">${comment.answerUser.name}回复${comment.answeredUser.name}：</span>
+							</c:if>
+						</div>
+						<span style="margin-left: 100px">${comment.comment_content }</span>
 					</div>
-					<span style="margin-left: 100px">一楼</span>
-				</div>
-				<br>
-				<div >
-				发布日期:${blog.date} &nbsp&nbsp&nbsp&nbsp
-				<!--让它移上去变成手，并不会跳转  --> 
-				<a href="javascript:;"><span >点赞</span> <span class="badge">0</span></a>
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-				<a href="javascript:;"><span >不喜欢</span> <span class="badge">0</span></a>
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-				<a href="javascript:;"><span >写评论 </span></a> 
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 
-				<a href="javascript:;"><span >举报</span></a>							
-				</div>
-				<div Style="font-size: 15px;border-top:solid 1px gray;"></div>
-				
-				<div >
-					<div>
-						<img style="margin-top:10px" src="${bUser.src}"  width="41" height="34" class="img-circle img-thumbnail">
-						<span style="font-size: 20px;margin-bmargin-bottom:-10px">xxx评论：</span>
+					<br>
+					<div >
+					日期:${comment.date} &nbsp&nbsp&nbsp&nbsp
+					<!--让它移上去变成手，并不会跳转  --> 
+					<a href="javascript:;"><span >${comment.praiseStatus}</span> <span class="badge">${comment.praiseCount }</span></a>
+					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+					<a href="javascript:;"><span >写评论 </span></a> 
+					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 
+					<a href="javascript:;"><span >举报</span></a>							
 					</div>
-					<span style="margin-left: 100px">二楼</span>
-				</div>
-				<br>
-				<div Style="font-size: 15px;border-top:solid 1px gray;"></div><br>
-				<br><br>
-			</div>
+					<div Style="font-size: 15px;border-top:solid 1px gray;"></div>					
+				</c:forEach>				
 		</div>
 		<!-- 一个隐藏的标签，便于jq获取博客的id -->
 		<span id="blogId" style="display:none">${blog.id}</span>
+		<span id="userId" style="display:none">${sessionScope.user.id}</span>
+		<br><br>
 	</div>
-	<br><br>
-	
+	</div>
+
 </body>
 </html>

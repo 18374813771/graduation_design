@@ -21,8 +21,8 @@
 	</insert>
 	<!--新增一条评论记录  -->
 	<insert id="insertComment" parameterType="Comment">
-		insert into comment(comment_content,uid,praise_count,style,master_id,date,topId,topStyle)
-			value(#{comment_content},#{uid},#{praise_count},#{style},#{master_id},#{date},#{topId},#{topStyle})
+		insert into comment(comment_content,uid,style,master_id,date,topId,topStyle)
+			value(#{comment_content},#{uid},#{style},#{master_id},#{date},#{topId},#{topStyle})
 	</insert>
 	
 	<select id="getBlog" resultType="Blog">
@@ -36,11 +36,19 @@
 	</select>
 	<!--获取博客的点赞数量  -->
 	<select id="getPraise_count" resultType="java.lang.Integer">
-		select  count(*) from praise where pid=#{0}
+		select  count(*) from praise where pid=#{0} and tab=#{1} ;
 	</select>
 	<select id="selectPraise" resultType="Praise">
-		select * from praise where tab=#{0} and pid=#{1} and uid=#{2} 
+		select * from praise where tab=#{0} and pid=#{1} and uid=#{2} ; 
 	</select>
+	<!--查询一条博客所有的评论记录  -->
+	<select id="getCommentByTop" resultType="Comment">
+		select * from comment where topId = #{0} and topStyle = #{1} ;
+	</select>
+	<select id="getCommentUid" resultType="java.lang.Integer">
+		select uid from comment where style=#{0} and master_id = #{1} ;
+	</select>
+	
 	
 	<!-- 阅读记录加一 -->
 	<update id="updateRead_count" >

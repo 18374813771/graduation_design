@@ -3,6 +3,7 @@ package cn.dhx.service;
 import java.util.List;
 
 import cn.dhx.beans.Blog;
+import cn.dhx.beans.Comment;
 
 public interface IBlogService {
 	public List<String> getRealImages(String conetnt);
@@ -29,5 +30,7 @@ public interface IBlogService {
 
 	public void deletePraise(int bid, Integer uid);
 
-	public void insertComment(String commentContent,int uid, int blogId,int topId,String topStyle);
+	public void insertComment(String commentContent,int uid, int blogId,String style,int topId,String topStyle);
+
+	public List<Comment> getComments(int id,int userId);
 }
