@@ -30,7 +30,7 @@ public interface IBlogService {
 
 	public void deletePraise(int bid, Integer uid);
 
-	public void insertComment(String commentContent,int uid, int blogId,String style,int topId,String topStyle);
+	public void insertComment(String commentContent,int ownId,int uid, int id,String style,int topId,String topStyle);
 
 	public List<Comment> getComments(int id,int userId);
 }

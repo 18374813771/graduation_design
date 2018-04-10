@@ -165,15 +165,16 @@ public class BolgServiceImpl implements IBlogService {
 	
 	//新增一条评论
 	@Override
-	public void insertComment(String commentContent,int uid, int blogId,String style,
+	public void insertComment(String commentContent,int ownId,int uid, int id,String style,
 									 int topId,String topStyle) {
 		//封装一个评论对象
 		Comment comment = new Comment();
 		String date = this.getCurrentDate();
 		comment.setComment_content(commentContent);
+		comment.setOwnId(ownId);
 		comment.setUid(uid);
 		comment.setStyle(style);
-		comment.setMaster_id(blogId);
+		comment.setMaster_id(id);
 		comment.setDate(date);
 		comment.setTopId(topId);
 		comment.setTopStyle(topStyle);
@@ -189,27 +190,19 @@ public class BolgServiceImpl implements IBlogService {
 		int praiseCount = 0;
 		User answerUser;
 		User answeredUser;
-		Integer answeredUserId;
 		for(Comment comment:comments){
 			//获取评论的点赞数
 			praiseCount = dao.getPraise_count(comment.getId(), "comment");
 			comment.setPraiseCount(praiseCount);
+						
+			//得到评论者的信息
+			answerUser = userDao.getUserById(comment.getOwnId());
+			comment.setAnswerUser(answerUser);
 			
-			//如果评论的对象和顶级对象一样，则就是评论顶级对象
-			if(comment.getStyle().equals(comment.getTopStyle())){
-				//得到评论者的姓名
-				answerUser = userDao.getUserById(comment.getUid());
-				comment.setAnswerUser(answerUser);
-			}else {
-				//得到评论者的姓名
-				answerUser = userDao.getUserById(comment.getUid());
-				comment.setAnswerUser(answerUser);
-				
-				//得到被评论者的id
-				answeredUserId = dao.getCommentUid(comment.getStyle(),comment.getMaster_id());
-				answeredUser = userDao.getUserById(answeredUserId);
-				comment.setAnsweredUser(answeredUser);
-			}
+			//得到被评论者的信息
+			answeredUser = userDao.getUserById(comment.getUid());
+			comment.setAnsweredUser(answeredUser);
+			
 			//判断当前用户对此评论是否点过赞
 			if(dao.selectPraise("comment",comment.getId(),userId)==null){
 				comment.setPraiseStatus("点赞");

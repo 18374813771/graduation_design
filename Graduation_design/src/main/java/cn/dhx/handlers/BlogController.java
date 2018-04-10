@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -27,6 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.dhx.beans.Blog;
+import cn.dhx.beans.Comment;
 import cn.dhx.beans.User;
 import cn.dhx.service.IBlogService;
 import cn.dhx.service.IUserService;
@@ -78,7 +78,9 @@ public class BlogController {
         return string;
 	}
 	
-	//处理博客
+	/**
+	 * 处理博客
+	 * */
 	@RequestMapping("/blogging.do")
 	public String blogging(HttpServletRequest request){
 		//用户是否提交flag==1为提交，flag==2为取消
@@ -118,7 +120,9 @@ public class BlogController {
 		return "/toIndex.do";
 	}
 	
-	//去主页
+	/**
+	 * 去主页
+	 * */
 	@RequestMapping("/toIndex.do")
 	public String toIndex(HttpServletRequest request){
 		//获取主页博客数据
@@ -135,7 +139,9 @@ public class BlogController {
 		return "/WEB-INF/index.jsp";
 	}
 	
-	//具体博客页
+	/**
+	 * 具体博客页
+	 * */
 	@RequestMapping("/toShowBlog.do")
 	public String showBlog(HttpServletRequest request){
 		//接收博客id
@@ -181,7 +187,9 @@ public class BlogController {
 		return "/WEB-INF/showBlog.jsp";
 	}
 	
-	//对于用户点赞的处理
+	/**
+	 * 对于用户点赞的处理
+	 **/
 	@RequestMapping(value="ajaxPraise.do")
 	@ResponseBody
 	public String praiseBlog(HttpServletRequest request) throws IOException{
@@ -197,7 +205,10 @@ public class BlogController {
 		String praiseCount="{\"count\":"+praise_count+"}";
 		return praiseCount;
 	}
-	//对于用户取消赞的处理
+	
+	/**
+	 * 对于用户取消赞的处理
+	 * */
 	@RequestMapping("ajaxNotPraise.do")
 	@ResponseBody
 	public String notPraiseBlog(HttpServletRequest request) throws IOException{
@@ -215,21 +226,46 @@ public class BlogController {
 		return praiseCount;
 	}
 	
-	//处理用户的评论
+	/**
+	 * 处理用户的评论
+	 * */
 	@RequestMapping("commentSubmit.do")
 	@ResponseBody
 	public String commentSubmit(HttpServletRequest request){
 		String commentContent = request.getParameter("commentCotent");
 		//从request中获取博客id
 		int blogId=Integer.parseInt(request.getParameter("blogId"));
+		//被评论者的id
+		int uid=Integer.parseInt(request.getParameter("uid"));
+		
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("user");
+		//评论者
+		int ownId = user.getId();
+		String style = "blog";
+		int topId = blogId;
+		String topStyle = "blog";
+		service.insertComment(commentContent,ownId,uid,blogId,style,topId,topStyle);
+		return commentContent;
+	}
+	
+	/**
+	 * 通过ajax请求所有评论
+	 * @throws JsonProcessingException 
+	 * */
+	//produces="text/html;charset=UTF-8"响应数据到jsp中文会变成？？问题
+	@RequestMapping(value="/getComments.do",produces="text/html;charset=UTF-8")
+	@ResponseBody
+	public String getComments(HttpServletRequest request) throws JsonProcessingException{
+		int blogId=Integer.parseInt(request.getParameter("blogId"));
 		
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("user");
 		int uid = user.getId();
-		String style = "blog";
-		int topId = blogId;
-		String topStyle = "blog";
-		service.insertComment(commentContent,uid,blogId,style,topId,topStyle);
-		return commentContent;
+		List<Comment> comments = service.getComments(blogId, uid);
+		ObjectMapper jackson = new ObjectMapper();
+		String jComment = jackson.writeValueAsString(comments);
+		
+		return jComment;
 	}
 }

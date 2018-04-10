@@ -10,6 +10,12 @@
 <script src="../libs/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 
 <title>头部导航</title>
+ <script type="text/javascript">
+ 	$(function(){
+ 		$("div img").addClass('img-responsive');
+ 	})
+ 
+ </script>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top" style="height: 80px" role="navigation">

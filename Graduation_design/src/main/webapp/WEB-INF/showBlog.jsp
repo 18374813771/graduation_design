@@ -5,9 +5,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="../libs/jquery/jquery-1.8.3.js"></script>
 <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
 <link rel="stylesheet" href="../libs/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-<script src="../libs/jquery/jquery-1.8.3.js"></script>
+
 <script src="../libs/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 
 <title>博客详情</title>
@@ -29,9 +30,7 @@
 					},					
 					success : function(backData){
 						//把json字符串转出json对象
-						var jsonData=JSON.parse(backData);
-						//console.dir(backData);
-						//var count = j.count
+						var jsonData=JSON.parse(backData);						
 						//更改点赞数量
 						$("#praiseCount").html(jsonData.count);
 						$("#praise").html("已赞");
@@ -66,7 +65,156 @@
 		});		
 	})
 	
+	
+	
+	//点击查看评论显示隐藏
 	$(function(){
+		
+		//第一次进入该页时建立连接，使用websocket实时更新评论数据
+		var webSocket = null;
+		//判断浏览器是否支持websocket
+		if('WebSocket' in window){
+			webSocket = new WebSocket("ws:localhost:8080/websocket.do")
+		}else{					
+		    alert('Not support websocket')  
+		}
+		//连接发生错误的回调方法  
+        webSocket.onerror = function(){  
+          setMessageInnerHTML("error");  
+        };
+        
+        //连接成功时，先用ajax请求评论数据
+		webSocket.onopen = function(){	
+			var blogId = $("#blogId").text();
+// 			webSocket.send(blogId);
+			$.ajax({
+				type :"POST",
+				url  :"${pageContent.request.contentPath}/getComments.do?time="+new Date().getTime(),
+// 				scriptCharset: 'utf-8', 
+				data :{
+					"blogId" : blogId
+				},
+				success : function(backData){
+					var comments = JSON.parse(backData);
+					var bUserName = $("#bUserName").text();
+					//用append动态添加数据
+					for(i=0;i< comments.length;i++){
+						$("#commentContent").append("<img style=\"margin-top:10px\" src="+comments[i].answerUser.src+"  width=\"41\" height=\"34\" class=\"img-circle img-thumbnail\">")
+						if(comments[i].answerUser.name==bUserName&&comments[i].answeredUser.name==bUserName){
+							$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">(博主) 回答：</span>");
+						}else 
+						if(comments[i].answeredUser.name==bUserName&&comments[i].answerUser.name!=bUserName){
+// 							console.log(comments[i].answeredUser.name+","+bUserName+","+comments[i].answerUser.name);
+							$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">"+comments[i].answerUser.name+" 评论：</span>");
+						}else{
+							$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">"+comments[i].answerUser.name+" 回复 "+comments[i].answeredUser.name+"：</span>")
+						}
+						$("#commentContent").append("<br><span style=\"margin-left: 100px\">"+comments[i].comment_content+"</span></div><br><br>");
+						$("#commentContent").append("<div class=\"oneComment\">"+
+								"日期:"+comments[i].date+"&nbsp&nbsp&nbsp&nbsp"+						 
+								"<a href=\"javascript:;\"><span id=\"praiseStatus_"+comments[i].id+"\">"+comments[i].praiseStatus+"</span>"+
+								"<span id=\"praiseCount_"+comments[i].id+"\" class=\"badge\">"+comments[i].praiseCount+"</span></a>"+
+								"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+
+								"<a href=\"javascript:;\"><span id=\"writeComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\">写评论 </span></a>"+ 
+								"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+ 
+								"<a href=\"javascript:;\"><span >举报</span></a>"+							
+								"<div Style=\"font-size: 15px;border-top:solid 1px gray;\"></div>"+
+								//隐藏的评论输入框
+								"<div id=\"divComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"input-group\" style=\"display:none\">"+				
+								"<input id=\"inputComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"form-control\" placeholder=\"请勿散布有害言论\">"+
+								"<span id=\"submitComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"input-group-addon\"><a href=\"javascript:;\">评论 </a></span>"+
+								"</div>")
+						
+						
+					}
+				},
+				error   : function(){
+					console.log("错误信息");
+				}
+			})
+		}
+        //处理解析生成组件的点击事件
+        $("#commentContent .oneComment a span").live('click',function(){
+        	var blogId = $("#blogId").text();
+        	
+        	var id = $(this).attr("id");
+        	var data = id.split("_");
+        	var style = data[0];
+        	//根据style判断是哪个组件
+        	if(style=="praiseStatus"){//点击的是点赞
+        		var currentStatus = $(this).text();//知道当前是点赞还是已赞
+        		$.ajax({
+        			type : "POST",
+        			url  : "${pageContext.request.contextPath}/blogCommentParise.do?time="+new Date().getTime(),
+        			data :{
+        					"id" : data[1],
+        					"currentStatus":currentStatus
+        			},
+        			success:function(backData){       				
+        				//把json字符串转出json对象
+						var jsonData=JSON.parse(backData);
+						var praiseCountSpanId ="\#praiseCount_"+data[1]+"";						
+						//改变赞的状态
+						$("\#"+id).html(jsonData.praiseStatus)
+ 						//更改点赞数量
+						$(praiseCountSpanId).html(jsonData.praiseCount);
+        			},
+        			error  : function(){
+						console.log("错误信息");
+					}
+        		})       		
+        	}else if(style=="writeComment"){
+        		//评论框的div的名称
+        		var divComment = "\#divComment_"+data[1];
+        		//评论输入框的id
+        		var inputComment = "inputComment_"+data[1];
+        		//评论提交按钮的id
+        		var submitCommentId = "\#submitComment_"+data[1];
+        		//判断评论框div是否显示
+				if($(divComment).is(":hidden")){
+					$(divComment).show();
+				}else{
+					$(divComment).hide();
+				}
+		
+				$(submitCommentId).click(function(){
+					//评论输入框数据并去除空格,必须要写到点击事件中
+					var inputCommentVal = $('#'+inputComment).val();
+					
+					//若输入为空，就不发送请求，并隐藏输入框
+					if(inputCommentVal==null||inputCommentVal==""){
+						$(divComment).hide();
+					}else{console.log("success");
+						var data1 = data[1].split("q");
+						
+						$.ajax({
+							type : "POST",
+							url  :"${pageContext.request.contextPath}/subOneComment.do?time="+new Date().getTime(),
+							data : {
+								"id" : data1[0],
+								"topId": data1[1],
+								"uid":data1[2],
+								"commentContent" : inputCommentVal
+							},
+							success : function(backData){
+// 								console.log("success");
+								//评论成功的调函数
+								$(divComment).hide();
+								webSocket.send(blogId);
+							},
+							error  : function(){
+								alert("评论错误信息");
+							}
+						})
+					}
+				})
+				
+        	}
+        	
+        })
+        
+       
+       
 		//点击'评论',显示，隐藏输入框
 		$("#comment").click(function(){
 			if($("#DComment").is(":hidden")){
@@ -84,17 +232,18 @@
 				return false;
 			} else {
 				var blogId=$("#blogId").text();
+				var uid = $("#bUserId").text();
 				$.ajax({
 					type :"POST",
 					url  :"${pageContent.request.contentPath}/commentSubmit.do?time="+new Date().getTime(),
 					data :{
+						"uid" : uid,
 						"commentCotent" : commentContent,
 						"blogId" : blogId
 					},
 					success : function(backData){
 						$("#DComment").hide();
-						//隐藏评论输入框
-						//显示评论
+						webSocket.send(blogId);
 					},
 					error   : function(){
 						console.log("错误信息");
@@ -103,35 +252,62 @@
 			}
 			
 		})
-	})
 	
-	//点击查看评论显示隐藏
-	$(function(){
-		//第一次进入该页时建立连接，使用websocket实时更新评论数据
-		var webSocket = null;
-		//判断浏览器是否支持websocket
-		if('WebSocket' in window){
-			webSocket = new WebSocket("ws:localhost:8080/websocket.do")
-		}else{					
-		    alert('Not support websocket')  
-		}
-		//连接发生错误的回调方法  
-        webSocket.onerror = function(){  
-          setMessageInnerHTML("error");  
-        };
-        //连接成功时发送博客id和当前用户id请求评论数据
-		webSocket.onopen = function(){	
-			var blogId = $("#blogId").text(); 
-			var userId = $("#userId").text();
-			var message =blogId+","+userId;
-	        webSocket.send(message);
-		}
-       
-		webSocket.onmessage = function(evnt) {
-			var comments = JSON.parse(evnt.data);
-			console.log(comments);
-//             $("#msg").html($("#msg").html() + "<br/>" + evnt.data);
-        };
+        //接受到服务器端传来的信息后，执行ajax操作
+		webSocket.onmessage = function(evt) {
+			  console.log(evt.data);
+			  var blogId=$("#blogId").text();
+			  $.ajax({
+					type :"POST",
+					url  :"${pageContent.request.contentPath}/getComments.do?time="+new Date().getTime(),
+//	 				scriptCharset: 'utf-8', 
+					data :{
+						"blogId" : blogId
+					},
+					success : function(backData){
+						var comments = JSON.parse(backData);
+						var bUserName = $("#bUserName").text();
+						//用append动态添加数据
+						for(i=0;i< comments.length;i++){
+							$("#commentContent").append("<img style=\"margin-top:10px\" src="+comments[i].answerUser.src+"  width=\"41\" height=\"34\" class=\"img-circle img-thumbnail\">")
+							if(comments[i].answerUser.name==bUserName&&comments[i].answeredUser.name==bUserName){
+								$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">(博主) 回答：</span>");
+							}else 
+							if(comments[i].answeredUser.name==bUserName&&comments[i].answerUser.name!=bUserName){
+//	 							console.log(comments[i].answeredUser.name+","+bUserName+","+comments[i].answerUser.name);
+								$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">"+comments[i].answerUser.name+" 评论：</span>");
+							}else{
+								$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">"+comments[i].answerUser.name+" 回复 "+comments[i].answeredUser.name+"：</span>")
+							}
+							$("#commentContent").append("<br><span style=\"margin-left: 100px\">"+comments[i].comment_content+"</span></div><br><br>");
+							$("#commentContent").append("<div class=\"oneComment\">"+
+									"日期:"+comments[i].date+"&nbsp&nbsp&nbsp&nbsp"+						 
+									"<a href=\"javascript:;\"><span id=\"praiseStatus_"+comments[i].id+"\">"+comments[i].praiseStatus+"</span>"+
+									"<span id=\"praiseCount_"+comments[i].id+"\" class=\"badge\">"+comments[i].praiseCount+"</span></a>"+
+									"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+
+									"<a href=\"javascript:;\"><span id=\"writeComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\">写评论 </span></a>"+ 
+									"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+ 
+									"<a href=\"javascript:;\"><span >举报</span></a>"+							
+									"<div Style=\"font-size: 15px;border-top:solid 1px gray;\"></div>"+
+									//隐藏的评论输入框
+									"<div id=\"divComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"input-group\" style=\"display:none\">"+				
+									"<input id=\"inputComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"form-control\" placeholder=\"请勿散布有害言论\">"+
+									"<span id=\"submitComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"input-group-addon\"><a href=\"javascript:;\">评论 </a></span>"+
+									"</div>")
+							
+// 							if($("#commentContent").is(":hidden")){
+// 								$(divComment).show();
+// 							}else{
+// 								$(divComment).hide();
+// 							}
+						}
+					},
+					error   : function(){
+						console.log("错误信息");
+					}
+				})
+		};    	  
+
 
         webSocket.onclose = function(evt) {
         	console.log("WebSocket连接关闭！");
@@ -154,6 +330,7 @@
 		})
 	})
 </script>
+
 </head>
 <body style="background-color:#e9eff6;">
 	<jsp:include   page="head.jsp" flush="true"/>
@@ -164,7 +341,7 @@
 					<img style="margin-top:20px" src="${bUser.src}"  width="82" height="68" class="img-circle img-thumbnail">
 				 	<button type="button" style="background-color:#fff;margin-left:50px">+关注</button>
 				 	<div style="margin-left:700px">阅读量 :${blog.read_count}</div>
-				 	<div>博主：${bUser.name}</div>
+				 	<div >博主：<span id="bUserName">${bUser.name}</span></div>
 				 </div>
 			</div>
 			<br>
@@ -195,39 +372,10 @@
 			
 			<!--显示评论内容 -->
 			<div id="commentContent" style="display:none">
-				<c:forEach items="${comments}" var="comment">
-					<div >
-						<div>
-							<img style="margin-top:10px" src="${comment.answerUser.src }"  width="41" height="34" class="img-circle img-thumbnail">
-							<!-- 分三种情况，是博主，不是博主评论博客，不是博主，评论评论 -->
-							<c:if test="${comment.answerUser.name.equals(bUser.name)}">
-								<span style="font-size: 16px;margin-bmargin-bottom:-10px">(博主)回答：</span>
-							</c:if>
-							<c:if test="${comment.answeredUser==null&&!comment.answerUser.name.equals(bUser.name)}">
-								<span style="font-size: 16px;margin-bmargin-bottom:-10px">${comment.answerUser.name}评论：</span>
-							</c:if>
-							<c:if test="${comment.answeredUser!=null&&!comment.answerUser.name.equals(bUser.name)}">
-								<span style="font-size: 16px;margin-bmargin-bottom:-10px">${comment.answerUser.name}回复${comment.answeredUser.name}：</span>
-							</c:if>
-						</div>
-						<span style="margin-left: 100px">${comment.comment_content }</span>
-					</div>
-					<br>
-					<div >
-					日期:${comment.date} &nbsp&nbsp&nbsp&nbsp
-					<!--让它移上去变成手，并不会跳转  --> 
-					<a href="javascript:;"><span >${comment.praiseStatus}</span> <span class="badge">${comment.praiseCount }</span></a>
-					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-					<a href="javascript:;"><span >写评论 </span></a> 
-					&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 
-					<a href="javascript:;"><span >举报</span></a>							
-					</div>
-					<div Style="font-size: 15px;border-top:solid 1px gray;"></div>					
-				</c:forEach>				
-		</div>
+			</div>
 		<!-- 一个隐藏的标签，便于jq获取博客的id -->
 		<span id="blogId" style="display:none">${blog.id}</span>
-		<span id="userId" style="display:none">${sessionScope.user.id}</span>
+		<span id="bUserId" style="display:none">${bUser.id}</span>
 		<br><br>
 	</div>
 	</div>

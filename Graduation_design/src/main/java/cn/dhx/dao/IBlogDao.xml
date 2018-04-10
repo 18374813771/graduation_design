@@ -21,8 +21,8 @@
 	</insert>
 	<!--新增一条评论记录  -->
 	<insert id="insertComment" parameterType="Comment">
-		insert into comment(comment_content,uid,style,master_id,date,topId,topStyle)
-			value(#{comment_content},#{uid},#{style},#{master_id},#{date},#{topId},#{topStyle})
+		insert into comment(comment_content,ownId,uid,style,master_id,date,topId,topStyle)
+			value(#{comment_content},#{ownId},#{uid},#{style},#{master_id},#{date},#{topId},#{topStyle})
 	</insert>
 	
 	<select id="getBlog" resultType="Blog">
@@ -46,7 +46,7 @@
 		select * from comment where topId = #{0} and topStyle = #{1} ;
 	</select>
 	<select id="getCommentUid" resultType="java.lang.Integer">
-		select uid from comment where style=#{0} and master_id = #{1} ;
+		select uid from comment where id = #{0} ;
 	</select>
 	
 	

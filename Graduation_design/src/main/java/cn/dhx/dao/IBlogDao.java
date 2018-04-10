@@ -32,7 +32,7 @@ public interface IBlogDao {
 
 	public List<Comment> getCommentByTop(int id, String topStyle);
 
-	public Integer getCommentUid(String style, Integer master_id);
+	public Integer getCommentUid(Integer id);
 
 	
 
