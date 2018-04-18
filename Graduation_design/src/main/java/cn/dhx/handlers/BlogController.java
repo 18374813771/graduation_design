@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -30,6 +29,7 @@ import cn.dhx.beans.Comment;
 import cn.dhx.beans.User;
 import cn.dhx.service.IBlogService;
 import cn.dhx.service.IUserService;
+import cn.dhx.webSocket.MyWebSocketHandler;
 
 @Controller
 public class BlogController {
@@ -39,6 +39,10 @@ public class BlogController {
 	@Autowired
 	@Qualifier("UserService")
 	private IUserService userService;
+	
+	@Autowired
+	private MyWebSocketHandler webSocketHandler;
+	
 	//博客编辑文件上传
 	@RequestMapping(value="/blogImgUpload.do")
 	@ResponseBody
@@ -126,7 +130,7 @@ public class BlogController {
 	@RequestMapping("/toIndex.do")
 	public String toIndex(HttpServletRequest request){
 		//获取主页博客数据
-		List<Blog> blogs=service.getBlog();
+		List<Blog> blogs=service.getBlog();		
 		for(Blog blog:blogs){
 			int bid = blog.getId();
 			//查询阅读量
@@ -173,17 +177,13 @@ public class BlogController {
 		//获取点赞的条数
 		int praiseCount = service.getPraise_count(id); 
 		blog.setPraise_count(praiseCount);
+		//得到用户的关注状态
+		String focusStatus = service.getFocusStatus(user.getId(),bUser.getId());
 		
-		//获取该博客的评论
-//		List<Comment> comments = service.getComments(id,userId);
-		//博客下的评论数量
-//		int answerCount =comments.size();
-		
+		request.setAttribute("focusStatus", focusStatus);
 		request.setAttribute("praiseStatus", praiseStatus);
 		request.setAttribute("blog", blog);
 		request.setAttribute("bUser",bUser);
-//		request.setAttribute("comments", comments);
-//		request.setAttribute("answerCount", answerCount);
 		return "/WEB-INF/showBlog.jsp";
 	}
 	
@@ -240,12 +240,22 @@ public class BlogController {
 		
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("user");
+	
+		
 		//评论者
 		int ownId = user.getId();
 		String style = "blog";
 		int topId = blogId;
 		String topStyle = "blog";
 		service.insertComment(commentContent,ownId,uid,blogId,style,topId,topStyle);
+		//websocket通知前台有评论提交
+		try {
+			webSocketHandler.sendStatuesToUser(blogId);
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
 		return commentContent;
 	}
 	

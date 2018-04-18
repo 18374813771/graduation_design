@@ -30,11 +30,13 @@ public class UserServiceImpl implements IUserService {
 		ObjectMapper jackson = new ObjectMapper();
 		//添加数据库
 		dao.insertUser(user);
+		//把查出的数据加入缓存
+		User newUser = dao.getUserInfo(user.getName());
 		try{
 			//把user对象转化为json字符串
-			String userJson = jackson.writeValueAsString(user);
+			String userJson = jackson.writeValueAsString(newUser);
 			//把数据加入缓存
-			jedisClient.hset("user",user.getName(), userJson);
+			jedisClient.hset("user",user.getName(),userJson);
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -110,7 +112,6 @@ public class UserServiceImpl implements IUserService {
 	
 	//根据id查询用户信息
 	public User getUserById(Integer id) {
-		// TODO Auto-generated method stub
 		return dao.getUserById(id);
 	}
 }

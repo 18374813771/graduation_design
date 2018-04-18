@@ -16,6 +16,10 @@ import cn.dhx.dao.IBlogDao;
 public class CommentServiceImpl implements ICommentService {
 	@Resource(name="IBlogDao")
 	IBlogDao dao;
+	
+	/**
+	 * 处理对评论的点赞，返回点赞的状态数量
+	 * */
 	@Override
 	public String praise(Integer id,Integer uid, String status) {
 		String praiseStatus ; 

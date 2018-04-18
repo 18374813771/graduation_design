@@ -83,22 +83,25 @@
           setMessageInnerHTML("error");  
         };
         
-        //连接成功时，先用ajax请求评论数据
+        //连接成功时，send消息，请求数据
 		webSocket.onopen = function(){	
 			var blogId = $("#blogId").text();
-// 			webSocket.send(blogId);
+			webSocket.send(blogId);
 			$.ajax({
 				type :"POST",
 				url  :"${pageContent.request.contentPath}/getComments.do?time="+new Date().getTime(),
-// 				scriptCharset: 'utf-8', 
 				data :{
 					"blogId" : blogId
 				},
 				success : function(backData){
 					var comments = JSON.parse(backData);
 					var bUserName = $("#bUserName").text();
+					
+					//把原来的东西清空
+					$("#commentContent").html("");
 					//用append动态添加数据
 					for(i=0;i< comments.length;i++){
+						
 						$("#commentContent").append("<img style=\"margin-top:10px\" src="+comments[i].answerUser.src+"  width=\"41\" height=\"34\" class=\"img-circle img-thumbnail\">")
 						if(comments[i].answerUser.name==bUserName&&comments[i].answeredUser.name==bUserName){
 							$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">(博主) 回答：</span>");
@@ -121,7 +124,7 @@
 								"<div Style=\"font-size: 15px;border-top:solid 1px gray;\"></div>"+
 								//隐藏的评论输入框
 								"<div id=\"divComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"input-group\" style=\"display:none\">"+				
-								"<input id=\"inputComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"form-control\" placeholder=\"请勿散布有害言论\">"+
+								"<input id=\"inputComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"form-control\" placeholder=\"回复"+comments[i].answerUser.name+"\">"+
 								"<span id=\"submitComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"input-group-addon\"><a href=\"javascript:;\">评论 </a></span>"+
 								"</div>")
 						
@@ -197,10 +200,8 @@
 								"commentContent" : inputCommentVal
 							},
 							success : function(backData){
-// 								console.log("success");
 								//评论成功的调函数
 								$(divComment).hide();
-								webSocket.send(blogId);
 							},
 							error  : function(){
 								alert("评论错误信息");
@@ -243,7 +244,7 @@
 					},
 					success : function(backData){
 						$("#DComment").hide();
-						webSocket.send(blogId);
+						
 					},
 					error   : function(){
 						console.log("错误信息");
@@ -255,26 +256,28 @@
 	
         //接受到服务器端传来的信息后，执行ajax操作
 		webSocket.onmessage = function(evt) {
-			  console.log(evt.data);
+			  console.log(evt.data)
 			  var blogId=$("#blogId").text();
 			  $.ajax({
 					type :"POST",
 					url  :"${pageContent.request.contentPath}/getComments.do?time="+new Date().getTime(),
-//	 				scriptCharset: 'utf-8', 
 					data :{
 						"blogId" : blogId
 					},
 					success : function(backData){
 						var comments = JSON.parse(backData);
 						var bUserName = $("#bUserName").text();
+						
+						//把原来的东西清空
+						$("#commentContent").html("");
 						//用append动态添加数据
 						for(i=0;i< comments.length;i++){
+							
 							$("#commentContent").append("<img style=\"margin-top:10px\" src="+comments[i].answerUser.src+"  width=\"41\" height=\"34\" class=\"img-circle img-thumbnail\">")
 							if(comments[i].answerUser.name==bUserName&&comments[i].answeredUser.name==bUserName){
 								$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">(博主) 回答：</span>");
 							}else 
 							if(comments[i].answeredUser.name==bUserName&&comments[i].answerUser.name!=bUserName){
-//	 							console.log(comments[i].answeredUser.name+","+bUserName+","+comments[i].answerUser.name);
 								$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">"+comments[i].answerUser.name+" 评论：</span>");
 							}else{
 								$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">"+comments[i].answerUser.name+" 回复 "+comments[i].answeredUser.name+"：</span>")
@@ -291,15 +294,11 @@
 									"<div Style=\"font-size: 15px;border-top:solid 1px gray;\"></div>"+
 									//隐藏的评论输入框
 									"<div id=\"divComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"input-group\" style=\"display:none\">"+				
-									"<input id=\"inputComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"form-control\" placeholder=\"请勿散布有害言论\">"+
+									"<input id=\"inputComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"form-control\" placeholder=\"回复"+comments[i].answerUser.name+"\">"+
 									"<span id=\"submitComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"input-group-addon\"><a href=\"javascript:;\">评论 </a></span>"+
 									"</div>")
 							
-// 							if($("#commentContent").is(":hidden")){
-// 								$(divComment).show();
-// 							}else{
-// 								$(divComment).hide();
-// 							}
+
 						}
 					},
 					error   : function(){
@@ -328,6 +327,25 @@
 				$("#content").html("查看评论");
 			}
 		})
+		//添加关注
+		$("#focus_on").click(function(){
+			var by_follower= $("#bUserId").text();
+			var focusStatus = $(this).text();
+			$.ajax({
+				type:"POST",
+				url :"${pageContext.request.contextPath}/focus_on.do?time="+new Date().getTime(),
+				data:{
+					"by_follower":by_follower,
+					"focusStatus":focusStatus
+				},
+				success : function(backData){
+					$("#focus_on").html(backData);
+				},
+				error : function(){
+					console.log("添加关注错误");
+				}
+			})
+		})
 	})
 </script>
 
@@ -339,7 +357,9 @@
 			<div Style="font-size: 20px;border-bottom:solid 1px green;">
 				<div>
 					<img style="margin-top:20px" src="${bUser.src}"  width="82" height="68" class="img-circle img-thumbnail">
-				 	<button type="button" style="background-color:#fff;margin-left:50px">+关注</button>
+				 	<c:if test="${bUser.name!=sessionScope.user.name}">
+				 		<button type="button" id="focus_on" style="background-color:#fff;margin-left:50px">${focusStatus}</button>
+				 	</c:if>
 				 	<div style="margin-left:700px">阅读量 :${blog.read_count}</div>
 				 	<div >博主：<span id="bUserName">${bUser.name}</span></div>
 				 </div>

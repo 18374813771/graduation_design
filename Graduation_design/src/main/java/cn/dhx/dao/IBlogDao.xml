@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper  
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">   
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
 <mapper namespace="cn.dhx.dao.IBlogDao">
 	<insert id="insertBlog" parameterType="cn.dhx.beans.Blog">
 	   insert into blog(blog_name,blog_content,uid,date) 
@@ -23,6 +23,10 @@
 	<insert id="insertComment" parameterType="Comment">
 		insert into comment(comment_content,ownId,uid,style,master_id,date,topId,topStyle)
 			value(#{comment_content},#{ownId},#{uid},#{style},#{master_id},#{date},#{topId},#{topStyle})
+		<!--返回自增的id  -->
+	   	<selectKey resultType="int" order="AFTER" keyProperty="id">  
+        	<![CDATA[ SELECT LAST_INSERT_ID() AS id ]]> 
+  		</selectKey>
 	</insert>
 	
 	<select id="getBlog" resultType="Blog">
@@ -48,7 +52,9 @@
 	<select id="getCommentUid" resultType="java.lang.Integer">
 		select uid from comment where id = #{0} ;
 	</select>
-	
+	<select id="getFocus_onId" resultType="java.lang.Integer">
+		select id from focus_on where follower=#{0} and by_follower=#{1}
+	</select>
 	
 	<!-- 阅读记录加一 -->
 	<update id="updateRead_count" >

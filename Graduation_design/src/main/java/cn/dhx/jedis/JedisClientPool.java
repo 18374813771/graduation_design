@@ -1,5 +1,7 @@
 package cn.dhx.jedis;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -44,6 +46,20 @@ public class JedisClientPool implements JedisClient {
 		long delCount=jedis.hdel(key, field);
 		jedis.close();
 		return delCount;
+	}
+
+
+	/**
+	 * 获取此key下所有的field-value
+	 * */
+	@Override
+	public Map<String,String> hgetAllValues(String key) {
+		jedis = jedisPool.getResource();
+		Map<String,String> allValues = jedis.hgetAll(key);
+		jedis.close();
+		
+//		jedisPool.returnResource(jedis);
+		return allValues;
 	}
 	
 }

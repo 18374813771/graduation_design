@@ -32,16 +32,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler implements WebSocke
 		while(mapKeys.hasNext()){
 			//遍历，找到，删除迭代器中多次调用。next();就会报NoSuchElementException错误
 			webSocketMap.get(mapKeys.next()).remove(session);
-			//如果此key下的set集合中存在此session，就删除它
-//			if(webSocketMap.get(mapKeys.next()).contains(session)){
-//				webSocketMap.get(mapKeys.next()).remove(session);
-//				//如果此时value为空，即没有连接，就删除此条数据
-//				if(webSocketMap.get(mapKeys.next()).isEmpty()){
-//					webSocketMap.remove(mapKeys.next());
-//				}
-//				//删除session之后不用继续遍历，跳出循环
-//				break;
-//			}
 			
 		}
 	};
@@ -52,11 +42,11 @@ public class MyWebSocketHandler extends TextWebSocketHandler implements WebSocke
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
        try{    	       	   
     	   //收到客户端传来的博客id后转类型
-    	   int blogId = Integer.parseInt(message.getPayload());    	  
+    	   int blogId = Integer.parseInt(message.getPayload());  
     	   //把session和博客id加入到map中
     	   this.addSession(session, blogId);
     	   //群发消息
-    	   this.sendStatuesToUser(blogId);
+//    	   this.sendStatuesToUser(blogId);
     	   
        }catch(Exception e){
     	   e.printStackTrace();

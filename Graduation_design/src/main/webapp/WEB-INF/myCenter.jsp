@@ -4,19 +4,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="x-ua-compatible"/> 
-<!-- <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> -->
+<!-- <meta http-equiv="x-ua-compatible"/>  -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>个人中心</title>
 
-<script src="../libs/jquery/jquery-1.8.3.js"></script>
-<link rel="stylesheet" href="../libs/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-<script src="../libs/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="../libs/css/amazeui.min.css">
-<link rel="stylesheet" href="../libs/css/amazeui.cropper.css">
-<link rel="stylesheet" href="../libs/css/custom_up_img.css">
-<link rel="stylesheet" type="text/css" href="../libs/css/font-awesome.4.6.0.css">
-<script src="../libs/js/amazeui.min.js" charset="utf-8"></script>
-<script src="../libs/js/cropper.min.js" charset="utf-8"></script>
+<script src="${pageContext.request.contextPath}/libs/jquery/jquery-1.8.3.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/libs/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+<script src="${pageContext.request.contextPath}/libs/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/libs/css/amazeui.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/libs/css/amazeui.cropper.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/libs/css/custom_up_img.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/libs/css/font-awesome.4.6.0.css">
+<script src="${pageContext.request.contextPath}/libs/js/amazeui.min.js" charset="utf-8"></script>
+<script src="${pageContext.request.contextPath}/libs/js/cropper.min.js" charset="utf-8"></script>
 <style type="text/css">
 	.up-img-cover {width: 100px;height: 100px;}
 	.up-img-cover img{width: 100%;}
@@ -30,31 +30,31 @@
  </script>
 </head>
 <body>
-<!-- 头部导航，直接引入会出现错误，使更换头像失灵 -->
-	<nav class="navbar navbar-default navbar-fixed-top" style="height: 80px" role="navigation">
-		    <div class="container-fluid">
-			    <div class="navbar-header">
-			        <h2>微博客平台</h2>
-			    </div>
-		
-			    <div class="navbar-text navbar-right">
-			        <ul class="nav navbar-nav">
-			        	<li><h4  class="navbar-text"><a href="/toIndex.do">首页</a></h4></li>
-			        	<li ><h4  class="navbar-text"><a href="/toBlog.do">写博客</a></h4></li>
-			        	<c:if test="${user==null}">
-			        		<li><a href="/toMyCenter.do"><img style="margin-top:-20px" src="../img/default.jpg"  width="50" height="40" class="img-circle img-thumbnail"></a></li>
-			        	</c:if>
-			        	<c:if test="${user!=null}">
-			        		<li><a href="/toMyCenter.do"><img style="margin-top:-20px" src="${user.src}"  width="50" height="40" class="img-circle img-thumbnail"></a></li>
-			        	</c:if>
-			            <li>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li>
-			            <li ><h4  class="navbar-text"><a href="/toLogin.do">登录</a></h4></li>
-			            <li ><h4  class="navbar-text"><a href="/toRegister.do">注册</a></h4></li>
-			           
-			        </ul>
-			    </div>
-		    </div>
-		</nav>
+<!-- 	<nav class="navbar navbar-default navbar-fixed-top" style="height: 80px" role="navigation"> -->
+<!-- 	    <div class="container-fluid"> -->
+<!-- 		    <div class="navbar-header"> -->
+<!-- 		        <h2>微博客平台</h2> -->
+<!-- 		    </div> -->
+	
+<!-- 		    <div class="navbar-text navbar-right"> -->
+<!-- 		        <ul class="nav navbar-nav"> -->
+<!-- 		        	<li><h4  class="navbar-text"><a href="/toIndex.do">首页</a></h4></li> -->
+<!-- 		        	<li ><h4  class="navbar-text"><a href="/toBlog.do">写博客</a></h4></li> -->
+<%-- 		        	<c:if test="${user==null}"> --%>
+<!-- 		        		<li><a href="/toMyCenter.do"><img style="margin-top:-20px" src="../img/default.jpg"  width="50" height="40" class="img-circle img-thumbnail"></a></li> -->
+<%-- 		        	</c:if> --%>
+<%-- 		        	<c:if test="${user!=null}"> --%>
+<%-- 		        		<li><a href="/toMyCenter.do"><img style="margin-top:-20px" src="${user.src}"  width="50" height="40" class="img-circle img-thumbnail"></a></li> --%>
+<%-- 		        	</c:if> --%>
+<!-- 		            <li>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li> -->
+<!-- 		            <li ><h4  class="navbar-text"><a href="/toLogin.do">登录</a></h4></li> -->
+<!-- 		            <li ><h4  class="navbar-text"><a href="/toRegister.do">注册</a></h4></li> -->
+		           
+<!-- 		        </ul> -->
+<!-- 		    </div> -->
+<!-- 	    </div> -->
+<!-- 	</nav> -->
+
 <%-- <jsp:include   page="head.jsp" /> --%>
 	<div class="col-sm-offset-2 col-sm-8" style="padding: 100px 100px 10px;">
 		<form class="bs-example bs-example-form" action="${pageContext.request.contextPath}/changeInfo.do" method="post" role="form">

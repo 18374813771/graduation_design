@@ -70,7 +70,16 @@
 			</form>
 		</div>
 <!-- 		<用户部分，还没写> -->
-		<div  class="col-md-3"><span>用户</span><br><br><br><br></div>
+<!-- 		<div  class="col-md-3" style="background-color:red; margin-right:0px"> -->
+<!-- 			<div class="col-md-8 navbar-right" style="background-color:blue; margin-right:-10px"> -->
+<!-- 				<span>我的好友</span> -->
+<!-- 				<ul> -->
+<!-- 					<li>张三</li> -->
+<!-- 					<li>李四</li> -->
+<!-- 					<li>王五</li> -->
+<!-- 				</ul> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
 	</div>
 </body>
 </html>

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+
 import cn.dhx.beans.User;
 import cn.dhx.service.IUserService;
 
@@ -93,11 +94,13 @@ public class UserController{
 	@RequestMapping("/changeInfo.do")
 	public String changeInfo(int age,String telephone,String sex,HttpServletRequest request){
 		HttpSession session = request.getSession();
+		
 		User user=(User) session.getAttribute("user");
 		user.setAge(age);
 		user.setTelephone(telephone);
 		user.setSex(sex);
 		service.updateUserInfo(user);
+		
 		return "/toMyCenter.do";
 	}
 	
@@ -148,5 +151,5 @@ public class UserController{
 	    }
 	    response.getWriter().write(msg);
 	}
-
+	
 }

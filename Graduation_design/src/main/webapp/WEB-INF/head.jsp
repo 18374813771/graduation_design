@@ -28,6 +28,8 @@
 		        <ul class="nav navbar-nav">
 		        	<li><h4  class="navbar-text"><a href="/toIndex.do">首页</a></h4></li>
 		        	<li ><h4  class="navbar-text"><a href="/toBlog.do">写博客</a></h4></li>
+		        	<li ><h4  class="navbar-text"><a href="#">社交</a></h4></li>
+		        	<li ><h4  class="navbar-text"><a href="#">消息</a></h4></li>
 		        	<c:if test="${user==null}">
 		        		<li><a href="/toMyCenter.do"><img style="margin-top:-20px" src="../img/default.jpg"  width="50" height="40" class="img-circle img-thumbnail"></a></li>
 		        	</c:if>

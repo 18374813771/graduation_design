@@ -34,6 +34,8 @@ public interface IBlogDao {
 
 	public Integer getCommentUid(Integer id);
 
+	public Integer getFocus_onId(Integer id, Integer id2);
+
 	
 
 }

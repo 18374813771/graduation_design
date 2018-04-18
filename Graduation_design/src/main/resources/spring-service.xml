@@ -20,13 +20,18 @@
 <!-- 		<context:component-scan base-package="cn.dhx.webSocket"/> -->
 		
 		<!-- 注册Service -->	
-		<bean id="UserServiceImpl" class="cn.dhx.service.UserServiceImpl">
-			<property name="dao" ref="IUserDao"></property>
-		</bean>
+<!-- 		<bean id="UserServiceImpl" class="cn.dhx.service.UserServiceImpl"> -->
+<!-- 			<property name="dao" ref="IUserDao"></property> -->
+<!-- 		</bean> -->
 
 		<!--注册redis连接池  -->
 		<bean id="JedisPool" class="redis.clients.jedis.JedisPool">
 			<constructor-arg  name="host" value="${redis.host}"></constructor-arg>
 			<constructor-arg  name="port" value="${redis.port}"></constructor-arg>
+		</bean>
+		<!-- 连接池配置 -->
+		<bean id="dataJedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">  
+	        <property name="maxTotal" value="100"/>
+	        <property name="maxIdle" value="50"/>  
 		</bean>
 </beans>

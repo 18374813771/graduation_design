@@ -1,5 +1,7 @@
 package cn.dhx.handlers;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import cn.dhx.beans.User;
 import cn.dhx.service.IBlogService;
 import cn.dhx.service.ICommentService;
+import cn.dhx.webSocket.MyWebSocketHandler;
 
 @Controller
 public class commentController {
@@ -23,6 +26,9 @@ public class commentController {
 	@Autowired
 	@Qualifier("blogService")
 	private IBlogService IBlogService;
+	
+	@Autowired
+	private MyWebSocketHandler webSocketHandler;
 	/**
 	 * 处理用户点赞评论
 	 * */
@@ -55,6 +61,14 @@ public class commentController {
 		String style = "comment";
 		String topStyle = "blog";
 		IBlogService.insertComment(commentContent,ownId,uid, id, style, topId, topStyle);
+		
+		//websocket通知前台有评论提交
+		try {
+			webSocketHandler.sendStatuesToUser(topId);
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
 		return null;
 		
 	}

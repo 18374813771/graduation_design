@@ -33,4 +33,6 @@ public interface IBlogService {
 	public void insertComment(String commentContent,int ownId,int uid, int id,String style,int topId,String topStyle);
 
 	public List<Comment> getComments(int id,int userId);
+
+	public String getFocusStatus(Integer id, Integer id2);
 }
