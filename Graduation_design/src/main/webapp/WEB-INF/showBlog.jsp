@@ -103,7 +103,7 @@
 					for(i=0;i< comments.length;i++){
 						
 						$("#commentContent").append("<img style=\"margin-top:10px\" src="+comments[i].answerUser.src+"  width=\"41\" height=\"34\" class=\"img-circle img-thumbnail\">")
-						if(comments[i].answerUser.name==bUserName&&comments[i].answeredUser.name==bUserName){
+						if(comments[i].answerUser.name==bUserName&&comments[i].answeredUser.name==bUserName&&comments[i].style=="blog"){
 							$("#commentContent").append("<span style=\"font-size: 16px;margin-bmargin-bottom:-10px\">(博主) 回答：</span>");
 						}else 
 						if(comments[i].answeredUser.name==bUserName&&comments[i].answerUser.name!=bUserName){

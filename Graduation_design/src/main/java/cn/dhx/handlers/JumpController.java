@@ -33,4 +33,5 @@ public class JumpController {
 	public String toBlog(){
 		return "/WEB-INF/blog.jsp";
 	}
+	
 }
