@@ -214,7 +214,12 @@
 			   <artifactId>spring-messaging</artifactId>
 			   <version>${spring.version}</version>
 			</dependency>
-	    
+		    <!-- solrJ的jar包 -->
+		    <dependency>  
+	            <groupId>org.apache.solr</groupId>  
+	            <artifactId>solr-solrj</artifactId>  
+	            <version>4.10.1</version>  
+	        </dependency>  
   </dependencies>
   <build>
   	<plugins> 

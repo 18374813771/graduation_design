@@ -25,16 +25,27 @@
 		    </div>
 	
 		    <div class="navbar-text navbar-right">
+		      	<form class="navbar-form navbar-left">
+			        <div class="form-group">
+			          <input type="text" class="form-control" placeholder="Search">
+			        </div>
+			        <button type="submit" class="btn btn-default">搜博客</button>
+		      	</form>
 		        <ul class="nav navbar-nav">
 		        	<li><h4  class="navbar-text"><a href="/toIndex.do">首页</a></h4></li>
 		        	<li ><h4  class="navbar-text"><a href="/toBlog.do">写博客</a></h4></li>
+		        	<!-- 管理员账号才显示 -->
+		        	<c:if test="${user.permissions==1}">
+		        		<li ><h4  class="navbar-text"><a href="/toReportManage.do">举报管理</a></h4></li>
+		        	</c:if>
 		        	<li ><h4  class="navbar-text"><a href="/toSocial.do">社交</a></h4></li>
 		        	<li ><h4  class="navbar-text"><a href="/toMessage.do">消息</a></h4></li>
+		        	
 		        	<c:if test="${user==null}">
 		        		<li><a href="/toMyCenter.do"><img style="margin-top:-20px" src="../img/default.jpg"  width="50" height="40" class="img-circle img-thumbnail"></a></li>
 		        	</c:if>
 		        	<c:if test="${user!=null}">
-		        		<li><a href="/toMyCenter.do"><img style="margin-top:-20px" src="${user.src}"  width="50" height="40" class="img-circle img-thumbnail"></a></li>
+		        		<li><a href="/toMyCenter.do"><img style="margin-top:-20px" src="${user.src}"  width="50" height="40" class="img-circle img-thumbnail">${user.name}</a></li>
 		        	</c:if>
 		            <li>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li>
 		            <li ><h4  class="navbar-text"><a href="/toLogin.do">登录</a></h4></li>

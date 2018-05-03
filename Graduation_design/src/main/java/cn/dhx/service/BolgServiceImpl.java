@@ -107,7 +107,7 @@ public class BolgServiceImpl implements IBlogService {
 	
 	//新增博客
 	@Override
-	public void insertBlog(String blogName, String content, Integer uid) {		
+	public int insertBlog(String blogName, String content, Integer uid) {		
 		String date = this.getCurrentDate();		
 		
 		Blog blog = new Blog();
@@ -130,6 +130,7 @@ public class BolgServiceImpl implements IBlogService {
 		}		
 		//新增一条阅读量记录
 		dao.insertRead_count("blog",bId,0);
+		return bId;
 	}
 
 	//获取所有博客信息
@@ -357,6 +358,18 @@ public class BolgServiceImpl implements IBlogService {
 			return "已关注";
 		}
 		return "+关注";
+	}
+	/**
+	 * 新增举报，如果该条信息已被举报则数量加1，
+	 * */
+	@Override
+	public void addReport(int commentId) {
+		Integer id = dao.getReportByCommentId(commentId);
+		if(id==null){
+			dao.insertReport(commentId);
+		}else{
+			dao.ReportAddCount(id);
+		}
 	}
 
 	

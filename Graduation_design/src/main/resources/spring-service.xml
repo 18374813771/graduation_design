@@ -16,6 +16,7 @@
 		<!-- 注册组件扫描器 -->
 		<context:component-scan base-package="cn.dhx.service"></context:component-scan>
 		<context:component-scan base-package="cn.dhx.jedis"></context:component-scan>
+		 <context:component-scan base-package="cn.dhx.solrJ"/>
 		<!-- websocket相关扫描，主要扫描：WebSocketConfig  如果前面配置能扫描到此类则可以不加 -->
 <!-- 		<context:component-scan base-package="cn.dhx.webSocket"/> -->
 		
@@ -34,4 +35,9 @@
 	        <property name="maxTotal" value="100"/>
 	        <property name="maxIdle" value="50"/>  
 		</bean>
+		<!-- 配置SOlrJ -->
+        <bean id="solrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
+        	<constructor-arg value="http://192.168.88.129:8080/solr"/>
+        </bean>
+       
 </beans>

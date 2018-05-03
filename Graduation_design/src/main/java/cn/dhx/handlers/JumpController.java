@@ -28,10 +28,7 @@ public class JumpController {
 		
 		return "/WEB-INF/myCenter.jsp";
 	}
-	//写博客页面
-	@RequestMapping("/toBlog.do")
-	public String toBlog(){
-		return "/WEB-INF/blog.jsp";
-	}
+	
+	
 	
 }

@@ -28,6 +28,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         	<![CDATA[ SELECT LAST_INSERT_ID() AS id ]]> 
   		</selectKey>
 	</insert>
+	<!-- 新增一条举报 -->
+	<insert id="insertReport">
+		insert into report(commentId,count) value(#{0},1)	
+	</insert>
 	
 	<select id="getBlog" resultType="Blog">
 		select * from blog order by id desc
@@ -55,12 +59,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getFocus_onId" resultType="java.lang.Integer">
 		select id from focus_on where follower=#{0} and by_follower=#{1}
 	</select>
-	
+	<!--查询举报id  -->
+	<select id="getReportByCommentId" resultType="int">
+		select id from report where commentId = #{0}
+	</select>
 	<!-- 阅读记录加一 -->
 	<update id="updateRead_count" >
 		update read_count set count=count+1 where rid=#{bid};
 	</update>
-	
+	<update id="ReportAddCount">
+		update report set count=count+1 where id = #{id}
+	</update>
 	<delete id="deletePraise">
 		delete from praise where tab=#{0} and pid=#{1} and uid=#{2}
 	</delete>

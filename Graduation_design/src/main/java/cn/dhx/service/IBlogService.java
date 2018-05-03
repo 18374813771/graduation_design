@@ -12,7 +12,7 @@ public interface IBlogService {
 
 	public String replaceContent(String content);
 
-	public void insertBlog(String blogName, String content, Integer uid);
+	public int insertBlog(String blogName, String content, Integer uid);
 
 	public List<Blog> getBlog();
 
@@ -35,4 +35,6 @@ public interface IBlogService {
 	public List<Comment> getComments(int id,int userId);
 
 	public String getFocusStatus(Integer id, Integer id2);
+
+	public void addReport(int commentId);
 }

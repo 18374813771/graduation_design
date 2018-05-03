@@ -102,8 +102,10 @@
 </head>
 <body >
 	<jsp:include   page="head.jsp" flush="true"/>
+	
 	<div class="container" style="margin-top:100px;">
-		<div class="col-md-7" style="margin-left:100px; margin-top:20px;">			
+		<div class="col-md-7" style="margin-left:100px; margin-top:20px;">
+					
 			<c:forEach items="${blogs}" var="blog">
 				<div>
 					<a style="color:black" href="/toShowBlog.do?id=${blog.id}">
@@ -114,13 +116,14 @@
 				</div>
 				<br>
 			</c:forEach>
-			
 		</div>
+		
+  
 		<!-- 好友部分 -->
 		<div  class="col-md-3 navbar-right" >
 			<div class="col-md-11 navbar-right" >
 				<div  class="input-group" >				
-					<input id="userText" class="form-control">
+					<input id="userText" class="form-control" placeholder="userName">
 					<span id="searchUser" class="input-group-addon"><a href="javascript:;">搜用户 </a></span>
 				</div>
 				<br>

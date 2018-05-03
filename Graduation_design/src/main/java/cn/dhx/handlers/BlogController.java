@@ -28,6 +28,7 @@ import cn.dhx.beans.Blog;
 import cn.dhx.beans.Comment;
 import cn.dhx.beans.User;
 import cn.dhx.service.IBlogService;
+import cn.dhx.service.IInteractionService;
 import cn.dhx.service.IUserService;
 import cn.dhx.webSocket.MyWebSocketHandler;
 
@@ -39,9 +40,23 @@ public class BlogController {
 	@Autowired
 	@Qualifier("UserService")
 	private IUserService userService;
-	
+	@Autowired
+	@Qualifier("interactionService")
+	private IInteractionService interactionService;
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
+	
+	
+	//写博客页面
+	@RequestMapping("/toBlog.do")
+	public String toBlog(HttpServletRequest request){
+		User user = (User)request.getSession().getAttribute("user");
+		Integer id = user.getId();
+		//获取好友列表
+		List<User> allFriends = interactionService.getAllFriends(id, 1);
+		request.setAttribute("allFriends", allFriends);
+		return "/WEB-INF/blog.jsp";
+	}
 	
 	//博客编辑文件上传
 	@RequestMapping(value="/blogImgUpload.do")
@@ -89,7 +104,7 @@ public class BlogController {
 	public String blogging(HttpServletRequest request){
 		//用户是否提交flag==1为提交，flag==2为取消
 		String strFlag=request.getParameter("flag");
-		int flag=Integer.parseInt(strFlag);
+		int flag=Integer.parseInt(strFlag);		
 		//用户取消后返回主页
 		if(flag==2){
 			return "/toIndex.do";
@@ -98,7 +113,12 @@ public class BlogController {
 		String blogName=(String) request.getParameter("blogName");
 		//原文章内容
 		String content=(String) request.getParameter("content");
-		
+		//从session中获取用户id
+		HttpSession session=request.getSession();
+		User user=(User) session.getAttribute("user");
+		Integer uid=user.getId();
+		//获取邀请的好友id列表
+		String invitedFriends[] = request.getParameterValues("invitedFriend");		
 		
 		//获取用户用到的图片列表
 		List<String> images = service.getRealImages(content);
@@ -115,12 +135,16 @@ public class BlogController {
 			content = service.replaceContent(content);
 			
 		}
-		//从session中获取用户id
-		HttpSession session=request.getSession();
-		User user=(User) session.getAttribute("user");
-		Integer uid=user.getId();
+	
 		//执行新增博客操作
-		service.insertBlog(blogName,content,uid);
+		int blogId = service.insertBlog(blogName,content,uid);
+		//把邀请回答的信息加入邀请表
+		if(invitedFriends!=null){
+			for(int i=0;i<invitedFriends.length;i++){
+				int iid = Integer.parseInt(invitedFriends[i]);
+				interactionService.addOneInvitation(uid,blogName,iid,blogId);
+			}
+		}
 		return "/toIndex.do";
 	}
 	
@@ -277,5 +301,14 @@ public class BlogController {
 		String jComment = jackson.writeValueAsString(comments);
 		
 		return jComment;
+	}
+	/**
+	 * 举报评论
+	 * */
+	@RequestMapping("report.do")
+	@ResponseBody
+	public void report(HttpServletRequest request){
+		int commentId = Integer.parseInt(request.getParameter("commentId"));
+		service.addReport(commentId);
 	}
 }

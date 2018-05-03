@@ -36,6 +36,12 @@ public interface IBlogDao {
 
 	public Integer getFocus_onId(Integer id, Integer id2);
 
+	public Integer getReportByCommentId(int commentId);
+
+	public void insertReport(int commentId);
+
+	public void ReportAddCount(Integer id);
+
 	
 
 }

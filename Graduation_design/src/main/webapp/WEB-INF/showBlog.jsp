@@ -120,7 +120,7 @@
 								"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+
 								"<a href=\"javascript:;\"><span id=\"writeComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\">写评论 </span></a>"+ 
 								"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+ 
-								"<a href=\"javascript:;\"><span >举报</span></a>"+							
+								"<a href=\"javascript:;\"><span id=\"report_"+comments[i].id+"\">举报</span></a>"+							
 								"<div Style=\"font-size: 15px;border-top:solid 1px gray;\"></div>"+
 								//隐藏的评论输入框
 								"<div id=\"divComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"input-group\" style=\"display:none\">"+				
@@ -210,6 +210,21 @@
 					}
 				})
 				
+        	}else if(style=="report"){
+        		var commentId = data[1];
+				$.ajax({
+					type:"POST",
+					url :"${pageContent.request.contentPath}/report.do?time="+new Date().getTime(),
+					data:{
+						"commentId":commentId
+					},
+					success :function(backData){
+						$("#report_"+commentId).html("举报成功")
+					},
+					error : function(){
+						console.log("举报错误");
+					}
+				})
         	}
         	
         })
@@ -290,7 +305,7 @@
 									"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+
 									"<a href=\"javascript:;\"><span id=\"writeComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\">写评论 </span></a>"+ 
 									"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+ 
-									"<a href=\"javascript:;\"><span >举报</span></a>"+							
+									"<a href=\"javascript:;\"><span id=\"report_"+comments[i].id+"\">举报</span></a>"+							
 									"<div Style=\"font-size: 15px;border-top:solid 1px gray;\"></div>"+
 									//隐藏的评论输入框
 									"<div id=\"divComment_"+comments[i].id+"q"+comments[i].topId+"q"+comments[i].answerUser.id+"\" class=\"input-group\" style=\"display:none\">"+				

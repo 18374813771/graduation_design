@@ -103,7 +103,7 @@
 			
 			<div class="input-group">
 				<span class="input-group-addon">请输入用户名：</span>
-				<input type="text" id="name" value="${name}" name="name" class="form-control" placeholder="姓名非空，长度6位以上，不包含特殊字符！" required >
+				<input type="text" id="name" value="${name}" name="name" class="form-control" placeholder="姓名非空，长度2位以上，不包含特殊字符！" required >
 			</div>
 			<div id="d1" class="col-sm-offset-2 col-sm-8"></div>
 			<br>
