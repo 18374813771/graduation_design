@@ -30,32 +30,9 @@
  </script>
 </head>
 <body>
-<!-- 	<nav class="navbar navbar-default navbar-fixed-top" style="height: 80px" role="navigation"> -->
-<!-- 	    <div class="container-fluid"> -->
-<!-- 		    <div class="navbar-header"> -->
-<!-- 		        <h2>微博客平台</h2> -->
-<!-- 		    </div> -->
-	
-<!-- 		    <div class="navbar-text navbar-right"> -->
-<!-- 		        <ul class="nav navbar-nav"> -->
-<!-- 		        	<li><h4  class="navbar-text"><a href="/toIndex.do">首页</a></h4></li> -->
-<!-- 		        	<li ><h4  class="navbar-text"><a href="/toBlog.do">写博客</a></h4></li> -->
-<%-- 		        	<c:if test="${user==null}"> --%>
-<!-- 		        		<li><a href="/toMyCenter.do"><img style="margin-top:-20px" src="../img/default.jpg"  width="50" height="40" class="img-circle img-thumbnail"></a></li> -->
-<%-- 		        	</c:if> --%>
-<%-- 		        	<c:if test="${user!=null}"> --%>
-<%-- 		        		<li><a href="/toMyCenter.do"><img style="margin-top:-20px" src="${user.src}"  width="50" height="40" class="img-circle img-thumbnail"></a></li> --%>
-<%-- 		        	</c:if> --%>
-<!-- 		            <li>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</li> -->
-<!-- 		            <li ><h4  class="navbar-text"><a href="/toLogin.do">登录</a></h4></li> -->
-<!-- 		            <li ><h4  class="navbar-text"><a href="/toRegister.do">注册</a></h4></li> -->
-		           
-<!-- 		        </ul> -->
-<!-- 		    </div> -->
-<!-- 	    </div> -->
-<!-- 	</nav> -->
 
-<%-- <jsp:include   page="head.jsp" /> --%>
+
+<jsp:include   page="head.jsp" />
 	<div class="col-sm-offset-2 col-sm-8" style="padding: 100px 100px 10px;">
 		<form class="bs-example bs-example-form" action="${pageContext.request.contextPath}/changeInfo.do" method="post" role="form">
 			<div class="text-center">

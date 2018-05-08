@@ -8,6 +8,8 @@ public class Blog {
 	private int read_count;
 	private int praise_count;
 	private String date;
+	//用于分页
+	private int totalCount;
 	public Integer getId() {
 		return id;
 	}
@@ -51,10 +53,18 @@ public class Blog {
 	public void setDate(String date) {
 		this.date = date;
 	}
+	
+	public int getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
 	@Override
 	public String toString() {
 		return "Blog [id=" + id + ", blog_name=" + blog_name + ", blog_content=" + blog_content + ", uid=" + uid
-				+ ", read_count=" + read_count + ", praise_count=" + praise_count + ", date=" + date + "]";
+				+ ", read_count=" + read_count + ", praise_count=" + praise_count + ", date=" + date + ", totalCount="
+				+ totalCount + "]";
 	}
 	
 	

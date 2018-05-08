@@ -9,16 +9,6 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
-<!-- <beans 	xmlns="http://www.springframework.org/schema/beans" -->
-<!-- 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" -->
-<!-- 		xmlns:context="http://www.springframework.org/schema/context" -->
-<!-- 		xmlns:websocket="http://www.springframework.org/schema/websocket" -->
-<!-- 		xsi:schemaLocation="http://www.springframework.org/schema/beans -->
-<!-- 		http://www.springframework.org/schema/beans/spring-beans.xsd -->
-<!-- 		http://www.springframework.org/schema/context -->
-<!-- 		http://www.springframework.org/schema/context/spring-context.xsd -->
-<!-- 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   -->
-<!--         http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd"> -->
 
 	<bean id="multipartResolver" 
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
@@ -46,5 +36,16 @@
 <!-- 	    <bean class="cn.dhx.webSocket.HandshakeInterceptor"/>   -->
 <!-- 	    </websocket:handshake-interceptors>   -->
 <!-- 	</websocket:handlers> -->
-
+	<mvc:interceptors>   
+      <mvc:interceptor>  
+          <mvc:mapping path="/*.do"/> 
+          <mvc:exclude-mapping path="/toIndex.do" />  
+          <mvc:exclude-mapping path="/toLogin.do" />
+          <mvc:exclude-mapping path="/toRegister.do" />
+          <mvc:exclude-mapping path="/register.do" /> 
+          <mvc:exclude-mapping path="/login.do" />
+          <mvc:exclude-mapping path="/logout.do" />  
+          <bean class="cn.dhx.filter.MyFilter"></bean> 
+      </mvc:interceptor>        
+ 	</mvc:interceptors>  
 </beans>

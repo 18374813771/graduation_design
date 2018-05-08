@@ -1,10 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%request.setCharacterEncoding("UTF-8");%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <script src="../libs/jquery/jquery-1.8.3.js"></script>
 <title>主页</title>
 <script >
@@ -143,5 +145,56 @@
 			</div>
 		</div>
 	</div>
+	
+	<!--分页 -->
+	<div class="text-center" style="width: 380px; margin: 0 auto;">
+		<ul class="pagination" style="text-align: center; margin-top: 10px;">
+			<!-- 上一页 -->
+			<!-- 判断当前页是否是第一页 -->
+			<c:if test="${pageBean.currentPage==1 }">
+				<li class="disabled">
+					<a href="javascript:void(0);" aria-label="Previous">
+						<span aria-hidden="true">&laquo;</span>
+					</a>
+				</li>
+			</c:if>
+			<c:if test="${pageBean.currentPage!=1 }">
+				<li>
+					<a href="/toIndex.do?currentPage=${pageBean.currentPage-1}&blogInfo=${blogInfo}" aria-label="Previous">
+						<span aria-hidden="true">&laquo;</span>
+					</a>
+				</li>
+			</c:if>	
+					
+			<c:forEach begin="1" end="${pageBean.totalPage }" var="page">
+				<!-- 判断当前页 -->
+				<c:if test="${pageBean.currentPage==page }">
+					<li class="active"><a href="javascript:void(0);">${page}</a></li>
+				</c:if>
+				<c:if test="${pageBean.currentPage!=page }">
+					<li><a href="/toIndex.do?currentPage=${page}&blogInfo=${blogInfo}">${page}</a></li>
+				</c:if>
+			
+			</c:forEach>
+			
+			<!-- 判断当前页是否是最后一页 -->
+			<c:if test="${pageBean.currentPage==pageBean.totalPage }">
+				<li class="disabled">
+					<a href="javascript:void(0);" aria-label="Next"> 
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+			</c:if>
+			<c:if test="${pageBean.currentPage!=pageBean.totalPage }">
+				<li>
+					<a href="/toIndex.do?currentPage=${pageBean.currentPage+1}&blogInfo=${blogInfo}" aria-label="Next"> 
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+			</c:if>
+		
+		</ul>
+	</div>
+	<!-- 分页结束 -->
 </body>
 </html>

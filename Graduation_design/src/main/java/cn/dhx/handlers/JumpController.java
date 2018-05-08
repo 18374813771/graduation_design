@@ -15,7 +15,7 @@ public class JumpController {
 		
 		return "/WEB-INF/register.jsp";
 	}
-	//去注册页面
+	//去登录页面
 	@RequestMapping("/toLogin.do")
 	public String toLogin(){
 		

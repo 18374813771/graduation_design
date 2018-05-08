@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -26,10 +27,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.dhx.beans.Blog;
 import cn.dhx.beans.Comment;
+import cn.dhx.beans.PageBean;
 import cn.dhx.beans.User;
 import cn.dhx.service.IBlogService;
 import cn.dhx.service.IInteractionService;
 import cn.dhx.service.IUserService;
+import cn.dhx.solrJ.ISolrDao;
 import cn.dhx.webSocket.MyWebSocketHandler;
 
 @Controller
@@ -45,7 +48,8 @@ public class BlogController {
 	private IInteractionService interactionService;
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
-	
+	@Autowired
+	private ISolrDao SolrDaoImpl;
 	
 	//写博客页面
 	@RequestMapping("/toBlog.do")
@@ -145,24 +149,74 @@ public class BlogController {
 				interactionService.addOneInvitation(uid,blogName,iid,blogId);
 			}
 		}
+		//加入 索引库
+		Blog blog = service.getBlogById(blogId);
+		SolrDaoImpl.addBlogIndex(blog);
 		return "/toIndex.do";
 	}
 	
 	/**
 	 * 去主页
+	 * @throws SolrServerException 
 	 * */
 	@RequestMapping("/toIndex.do")
-	public String toIndex(HttpServletRequest request){
-		//获取主页博客数据
-		List<Blog> blogs=service.getBlog();		
+	public String toIndex(HttpServletRequest request) throws SolrServerException{
+		//获取当前页码
+		int currentPage = 0;
+		//如果没有传入页码，默认为1
+		try{
+			currentPage = Integer.parseInt(request.getParameter("currentPage"));
+		}catch(Exception e){
+			currentPage = 1;
+		}
+		List<Blog> blogs = null;
+		String blogInfo = null;
+		try{
+			//如果存在blogInfo参数，则表明为搜索博客
+			
+			blogInfo = request.getParameter("blogInfo");
+			if(blogInfo!=null&&blogInfo!=""){
+				//判断输入数据是否编码正确，如果不是utf-8则转码
+				if(blogInfo.equals(new String(blogInfo.getBytes("iso8859-1"), "iso8859-1")))
+				{
+					blogInfo=new String(blogInfo.getBytes("iso8859-1"),"utf-8");
+				}
+			}
+			
+		}catch(Exception e){
+					
+		}
+		if(blogInfo==null||blogInfo==""){
+			
+			//如果前面没有blogInfo数据，则执行查询所有博客
+			blogs=SolrDaoImpl.getAllBlog(currentPage);
+		}else{
+			//从索引库根据条件查询博客数据
+			blogs = SolrDaoImpl.getBlogByInfo(blogInfo, (currentPage-1)*6);
+			
+		}		
+		
+		int totalCount = 0;
 		for(Blog blog:blogs){
 			int bid = blog.getId();
 			//查询阅读量
 			int count = service.getBlogRead_count(bid);
 			blog.setRead_count(count);
 			int praiseCount=service.getPraise_count(bid);
+			totalCount = blog.getTotalCount();
 			blog.setPraise_count(praiseCount);
 		}
+		//分页数据
+		PageBean pageBean = new PageBean();		
+		pageBean.setCurrentCount(6);
+		pageBean.setCurrentPage(currentPage);
+		int totalPage = totalCount/6+1;
+		pageBean.setTotalPage(totalPage);
+		pageBean.setTotalCount(totalCount);
+		
+		//把搜索信息传递到页面
+		request.setAttribute("blogInfo", blogInfo);
+		request.setAttribute("pageBean", pageBean);
 		request.setAttribute("blogs", blogs);
 		return "/WEB-INF/index.jsp";
 	}
@@ -311,4 +365,5 @@ public class BlogController {
 		int commentId = Integer.parseInt(request.getParameter("commentId"));
 		service.addReport(commentId);
 	}
+
 }
